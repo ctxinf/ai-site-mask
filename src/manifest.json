@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json.schemastore.org/chrome-manifest.json",
+  "background": {
+    "chromium:service_worker": "background.ts",
+    "firefox:scripts": [
+      "background.ts"
+    ]
+  },
+  "chromium:action": {
+    "default_icon": {
+      "16": "images/icon-16.png",
+      "32": "images/icon-32.png",
+      "48": "images/icon-48.png",
+      "64": "images/icon-64.png",
+      "128": "images/icon-128.png"
+    },
+    "default_popup": "action/index.html",
+    "default_title": "extension-workflow"
+  },
+  "chromium:manifest_version": 3,
+  "content_scripts": [
+    {
+      "js": [
+        "content/scripts.tsx"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ],
+  "description": "AI 快速迭代插件开发工作流实验（Extension.js + React + TypeScript）",
+  "firefox:browser_action": {
+    "default_icon": {
+      "16": "images/icon-16.png",
+      "32": "images/icon-32.png",
+      "48": "images/icon-48.png",
+      "64": "images/icon-64.png",
+      "128": "images/icon-128.png"
+    },
+    "default_popup": "action/index.html",
+    "default_title": "extension-workflow"
+  },
+  "firefox:browser_specific_settings": {
+    "gecko": {
+      "data_collection_permissions": {
+        "required": [
+          "none"
+        ]
+      },
+      "id": "extension-workflow@experiment"
+    }
+  },
+  "firefox:manifest_version": 2,
+  "icons": {
+    "16": "images/icon-16.png",
+    "32": "images/icon-32.png",
+    "48": "images/icon-48.png",
+    "64": "images/icon-64.png",
+    "128": "images/icon-128.png"
+  },
+  "name": "extension-workflow",
+  "version": "0.1.0",
+  "permissions": [
+    "storage"
+  ]
+}

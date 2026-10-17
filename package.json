@@ -1,0 +1,41 @@
+{
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "description": "浏览器插件：把 chatgpt.com / claude.ai 等网页版 AI 的界面换成 deepseek / doubao / qwen 风格（mask 换肤，不破坏原有功能）",
+  "devDependencies": {
+    "@types/chrome": "^0.0.287",
+    "@types/react": "^18.2.64",
+    "@types/react-dom": "^18.2.21",
+    "agent-browser": "0.39.1",
+    "extension": "4.1.33",
+    "typescript": "7.0.2"
+  },
+  "license": "MIT",
+  "name": "ai-site-skin-mask",
+  "private": true,
+  "scripts": {
+    "build": "extension build",
+    "dev": "extension dev --allow-control --allow-eval --logs all --log-format pretty",
+    "dev:quiet": "extension dev --allow-control --allow-eval",
+    "doctor": "extension doctor",
+    "install:browsers": "extension install chromium",
+    "logs": "extension logs --follow --context all --level all",
+    "logs:bg": "extension logs --follow --context background --level all",
+    "logs:content": "extension logs --follow --context content --level all",
+    "logs:ndjson": "extension logs --follow --context all --level all --output ndjson",
+    "logs:popup": "extension logs --follow --context popup --level all",
+    "open:popup": "node scripts/browser.mjs popup snapshot -i",
+    "reload": "extension reload",
+    "shot": "node scripts/shot.mjs",
+    "shot:page": "node scripts/shot.mjs --target page",
+    "shot:popup": "node scripts/shot.mjs --target popup",
+    "browser": "node scripts/browser.mjs",
+    "browser:popup": "node scripts/browser.mjs popup",
+    "browser:page": "node scripts/browser.mjs page",
+    "page": "node scripts/page.mjs"
+  },
+  "type": "module",
+  "version": "0.1.0"
+}

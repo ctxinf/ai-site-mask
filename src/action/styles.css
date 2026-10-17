@@ -1,0 +1,61 @@
+.popup {
+  width: 300px;
+  padding: 16px 18px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, 'Noto Sans', sans-serif;
+  color: #1a1d23;
+  background: #ffffff;
+}
+
+.popup h1 {
+  margin: 0 0 4px;
+  font-size: 20px;
+}
+
+.popup .subtitle {
+  margin: 0 0 12px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.popup .hmr-marker {
+  display: inline-block;
+  margin: 0 0 12px;
+  padding: 4px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0a6c2f;
+  background: #e6f6ec;
+  border-radius: 9999px;
+}
+
+.popup button {
+  display: block;
+  width: 100%;
+  padding: 8px 0;
+  font-size: 14px;
+  color: #fff;
+  background: #2563eb;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.popup button:hover {
+  background: #1d4ed8;
+}
+
+.banner-setting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 18px 0 8px;
+  font-size: 14px;
+}
+
+.banner-setting input {
+  width: 18px;
+  height: 18px;
+  accent-color: #2563eb;
+}
