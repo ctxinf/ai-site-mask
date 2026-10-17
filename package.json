@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@rspack/binding-linux-x64-gnu": "2.2.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
@@ -18,6 +19,7 @@
   "scripts": {
     "build": "extension build",
     "dev": "extension dev --allow-control --allow-eval --logs all --log-format pretty",
+    "dev:brave": "extension dev --browser=brave --profile false --allow-control --allow-eval",
     "dev:quiet": "extension dev --allow-control --allow-eval",
     "doctor": "extension doctor",
     "install:browsers": "extension install chromium",

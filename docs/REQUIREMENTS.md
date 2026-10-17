@@ -8,6 +8,9 @@
 把页面视觉改造成 deepseek.ai / doubao.com / qwen.ai 风格的界面——给网页套一层
 "mask"（换肤），**只换皮，不换功能**。
 
+- https://chat.qwen.ai/
+
+
 ## 2. 目标站点
 
 - 首批：chatgpt.com、claude.ai（网页版）。

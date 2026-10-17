@@ -1,4 +1,6 @@
-# extension-workflow
+# ai-site-skin-mask
+
+# extension-workflow  (原本的base template)
 
 让 Codex 和人共同开发浏览器插件：**Extension.js 管构建、热更新和日志；
 agent-browser 管同一个浏览器的交互、快照和截图。** React + TypeScript，Chromium MV3。

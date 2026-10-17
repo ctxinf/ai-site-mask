@@ -9,6 +9,7 @@ import {
 export default function PopupApp() {
   const [host, setHost] = useState<string | null>(null)
   const [mode, setMode] = useState<MaskMode>('original')
+  const [theme, setTheme] = useState<string>('qwen')
   const [autoApply, setAutoApply] = useState(false)
   const [ready, setReady] = useState(false)
   const [error, setError] = useState('')
@@ -36,6 +37,7 @@ export default function PopupApp() {
             return
           }
           setMode(state.mode)
+          setTheme(state.theme || (h.includes('claude') ? 'doubao' : 'qwen'))
           setAutoApply(state.autoApply)
         }
         setReady(true)
@@ -57,9 +59,23 @@ export default function PopupApp() {
     }
     setError('')
     try {
-      const state = await setSiteState(host, {mode: next})
+      const state = await setSiteState(host, {mode: next, theme})
       setMode(state.mode)
       console.log('[skm][popup] 模式已切换:', host, next)
+    } catch (err) {
+      setError(String(err))
+    }
+  }
+
+  async function switchTheme(nextTheme: string) {
+    if (!host || nextTheme === theme) {
+      return
+    }
+    setError('')
+    try {
+      const state = await setSiteState(host, {theme: nextTheme})
+      setTheme(state.theme || nextTheme)
+      console.log('[skm][popup] 主题已切换:', host, nextTheme)
     } catch (err) {
       setError(String(err))
     }
@@ -117,6 +133,29 @@ export default function PopupApp() {
               Mask
             </button>
           </div>
+
+          {mode === 'mask' && (host.includes('chatgpt') || host.includes('openai')) && (
+            <div className="theme-section">
+              <span className="theme-title">皮肤风格：</span>
+              <div className="theme-switch" role="group" aria-label="皮肤风格">
+                <button
+                  type="button"
+                  className={theme === 'qwen' ? 'active' : ''}
+                  onClick={() => switchTheme('qwen')}
+                >
+                  通义千问 (Qwen)
+                </button>
+                <button
+                  type="button"
+                  className={theme === 'deepseek' ? 'active' : ''}
+                  onClick={() => switchTheme('deepseek')}
+                >
+                  DeepSeek
+                </button>
+              </div>
+            </div>
+          )}
+
           <label className="auto-apply">
             <input
               type="checkbox"
@@ -126,7 +165,9 @@ export default function PopupApp() {
             <span>打开页面自动应用</span>
           </label>
           <p className="subtitle" role="status">
-            {mode === 'mask' ? 'Mask 已生效' : '当前为原版界面'} · 自动保存
+            {mode === 'mask'
+              ? `Mask 已生效（${theme === 'qwen' ? '通义千问' : theme}）`
+              : '当前为原版界面'} · 自动保存
           </p>
         </>
       )}
