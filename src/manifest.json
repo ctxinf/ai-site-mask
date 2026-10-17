@@ -15,20 +15,31 @@
       "128": "images/icon-128.png"
     },
     "default_popup": "action/index.html",
-    "default_title": "extension-workflow"
+    "default_title": "ai-site-skin-mask"
   },
   "chromium:manifest_version": 3,
   "content_scripts": [
     {
       "js": [
-        "content/scripts.tsx"
+        "sites/chatgpt/index.ts"
       ],
       "matches": [
-        "<all_urls>"
-      ]
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "js": [
+        "sites/claude/index.ts"
+      ],
+      "matches": [
+        "https://claude.ai/*"
+      ],
+      "run_at": "document_start"
     }
   ],
-  "description": "AI 快速迭代插件开发工作流实验（Extension.js + React + TypeScript）",
+  "description": "浏览器插件：把 chatgpt.com / claude.ai 等网页版 AI 的界面换成 deepseek / doubao / qwen 风格（mask 换肤，不破坏原有功能）",
   "firefox:browser_action": {
     "default_icon": {
       "16": "images/icon-16.png",
@@ -38,7 +49,7 @@
       "128": "images/icon-128.png"
     },
     "default_popup": "action/index.html",
-    "default_title": "extension-workflow"
+    "default_title": "ai-site-skin-mask"
   },
   "firefox:browser_specific_settings": {
     "gecko": {
@@ -58,9 +69,10 @@
     "64": "images/icon-64.png",
     "128": "images/icon-128.png"
   },
-  "name": "extension-workflow",
+  "name": "ai-site-skin-mask",
   "version": "0.1.0",
   "permissions": [
-    "storage"
+    "storage",
+    "tabs"
   ]
 }

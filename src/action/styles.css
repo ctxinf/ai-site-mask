@@ -19,42 +19,55 @@
   color: #6b7280;
 }
 
-.popup .hmr-marker {
-  display: inline-block;
+.popup .site-line {
   margin: 0 0 12px;
-  padding: 4px 10px;
   font-size: 13px;
-  font-weight: 600;
-  color: #0a6c2f;
-  background: #e6f6ec;
-  border-radius: 9999px;
+  color: #374151;
 }
 
-.popup button {
-  display: block;
-  width: 100%;
+.popup .unsupported {
+  margin: 12px 0;
+  padding: 10px 12px;
+  font-size: 13px;
+  color: #6b7280;
+  background: #f3f4f6;
+  border-radius: 8px;
+}
+
+.mode-switch {
+  display: flex;
+  gap: 0;
+  margin: 0 0 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.mode-switch button {
+  flex: 1;
   padding: 8px 0;
   font-size: 14px;
-  color: #fff;
-  background: #2563eb;
+  color: #374151;
+  background: #ffffff;
   border: none;
-  border-radius: 8px;
   cursor: pointer;
 }
 
-.popup button:hover {
-  background: #1d4ed8;
+.mode-switch button.active {
+  color: #fff;
+  background: #2563eb;
 }
 
-.banner-setting {
+.auto-apply {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  margin: 18px 0 8px;
+  gap: 8px;
+  margin: 0 0 8px;
   font-size: 14px;
+  cursor: pointer;
 }
 
-.banner-setting input {
+.auto-apply input {
   width: 18px;
   height: 18px;
   accent-color: #2563eb;
