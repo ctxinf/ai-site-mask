@@ -8,6 +8,8 @@ export interface SiteState {
   autoApply: boolean
   /** 主题粒度预留，当前 UI 只做「原版 / Mask」二切 */
   theme?: string
+  /** Resting opacity of controls absent from the reference UI (0–0.5). */
+  extraOpacity?: number
 }
 
 export interface MaskStorageSchema {
@@ -33,6 +35,8 @@ function normalizeSiteState(
     mode: raw?.mode === 'mask' ? 'mask' : 'original',
     autoApply:
       typeof raw?.autoApply === 'boolean' ? raw.autoApply : globalAutoApplyDefault,
+    extraOpacity: typeof raw?.extraOpacity === 'number' && Number.isFinite(raw.extraOpacity)
+      ? Math.max(0, Math.min(0.5, raw.extraOpacity)) : 0.25,
   }
   if (typeof raw?.theme === 'string' && raw.theme) {
     state.theme = raw.theme
@@ -63,7 +67,11 @@ export async function setSiteState(
     ...normalizeSiteState(schema.sites[host], schema.globalAutoApplyDefault),
     ...patch,
   }
-  const stored: SiteState = {mode: merged.mode, autoApply: merged.autoApply}
+  const stored: SiteState = {
+    mode: merged.mode, autoApply: merged.autoApply,
+    extraOpacity: typeof merged.extraOpacity === 'number' && Number.isFinite(merged.extraOpacity)
+      ? Math.max(0, Math.min(0.5, merged.extraOpacity)) : 0.25,
+  }
   if (merged.theme !== undefined) {
     stored.theme = merged.theme
   }
@@ -100,7 +108,7 @@ export function onSiteStateChange(
     if (
       before.mode !== after.mode ||
       before.autoApply !== after.autoApply ||
-      before.theme !== after.theme
+      before.theme !== after.theme || before.extraOpacity !== after.extraOpacity
     ) {
       cb(after)
     }

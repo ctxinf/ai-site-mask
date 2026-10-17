@@ -1,329 +1,295 @@
-/**
- * chatgpt.com × Qwen (通义千问 - https://chat.qwen.ai/) 深度伪装浅色主题。
- *
- * 核心目标：
- *  1. 视觉品牌替换：Logo、顶部标题、新建对话文案、输入框占位符、免责声明全量伪装为通义千问；
- *  2. 强制中和深色模式：无论用户当前 ChatGPT 是深色还是浅色，统一呈现纯净浅灰紫千问风格；
- *  3. 精确特征对齐：
- *     - 标志性 Qwen 紫色（#615ced / #6964ed）
- *     - AI 回复头像替换为 Qwen 紫底白色菱形星芒
- *     - 用户提问气泡：优雅淡紫（#eff0fe，圆角 16px，微紫描边）
- *     - 输入框：纯白底 + 24px 大圆角 + Qwen 紫外发光
- *     - 底部免责声明替换为千问官方口吻文案
- *
- * 硬约束：只改颜色/背景/伪类文案/圆角/字体字号/阴影；
- * 绝不拦截事件，绝不破坏原有会话和发送功能。
- */
+/** Qwen-inspired light skin. Keep the site's controls, model names and message DOM intact. */
 export const qwenThemeCss = `
-/* ============ 1. Qwen 品牌色板 ============ */
 html.skm-mask-on {
-  --skm-qwen-purple: #615ced;       /* Qwen 核心品牌紫 */
-  --skm-qwen-purple-hover: #504cd9; /* Qwen 品牌紫 Hover */
-  --skm-qwen-purple-light: #eff0fe; /* 用户气泡浅紫淡雅底色 */
-  --skm-qwen-purple-tint: #f5f6fe;  /* 微紫极浅背景 */
-  --skm-qwen-page: #ffffff;         /* 对话主区域纯白 */
-  --skm-qwen-sidebar: #f7f8fc;      /* 侧边栏千问冷灰微紫 */
-  --skm-qwen-composer: #ffffff;     /* 输入框底色 */
-  --skm-qwen-user-bubble: #eff0fe;  /* 用户消息气泡 */
-  --skm-qwen-text: #1f2329;         /* 主文字深度冷黑 */
-  --skm-qwen-text-2: #646a73;       /* 次级文字 */
-  --skm-qwen-text-3: #8f959e;       /* 辅助微弱文字 */
-  --skm-qwen-border: #e2e4ed;       /* 细分割线 */
-  --skm-qwen-border-focus: #615ced; /* 聚焦边框色 */
-  --skm-qwen-hover: #f0f1f5;        /* 通用 Hover 底色 */
-  --skm-qwen-shadow: rgba(97, 92, 237, 0.08); /* 品牌微紫柔光阴影 */
+  --skm-qwen-scheme: light;
+  --skm-qwen-page: #ffffff;
+  --skm-qwen-composer: #ffffff;
+  --skm-qwen-sidebar: #f7f7f9;
+  --skm-qwen-text: #242424;
+  --skm-qwen-secondary: #55555a;
+  --skm-qwen-muted: #929296;
+  --skm-qwen-faint: #b5b5ba;
+  --skm-qwen-border: #e3e3e6;
+  --skm-qwen-hover: #ededf0;
+  --skm-qwen-bubble: #f1f0fc;
+  --skm-qwen-active: #eaeaec;
+  --skm-qwen-accent: #6155f5;
+  --skm-qwen-focus: #aaa3e9;
+  --skm-qwen-selection: #dedbff;
+  --skm-qwen-scrollbar: #d3d3d7;
 }
-
-/* ============ 2. 接管 ChatGPT design token + 压制深色模式 ============ */
-html.skm-mask-on,
-html.skm-mask-on.dark,
-html.skm-mask-on .dark {
-  color-scheme: light !important;
+html.skm-mask-on[data-theme="dark"], html.skm-mask-on.dark {
+  --skm-qwen-scheme: dark;
+  --skm-qwen-page: #212121;
+  --skm-qwen-composer: #292929;
+  --skm-qwen-sidebar: #111111;
+  --skm-qwen-text: #f2f2f2;
+  --skm-qwen-secondary: #d0d0d0;
+  --skm-qwen-muted: #969696;
+  --skm-qwen-faint: #666666;
+  --skm-qwen-border: #505050;
+  --skm-qwen-hover: #2b2b2b;
+  --skm-qwen-bubble: #303030;
+  --skm-qwen-active: #292929;
+  --skm-qwen-accent: #a59aff;
+  --skm-qwen-focus: #777777;
+  --skm-qwen-selection: #49416b;
+  --skm-qwen-scrollbar: #464646;
+}
+html.skm-mask-on {
+  color-scheme: var(--skm-qwen-scheme) !important;
+  color: var(--skm-qwen-text) !important;
+  --color-text: var(--skm-qwen-text) !important;
+  --color-text-emphasis: var(--skm-qwen-text) !important;
+  --color-text-composer-primary: var(--skm-qwen-text) !important;
+  --color-text-secondary-soft-alt: var(--skm-qwen-secondary) !important;
+  --color-text-secondary-solid: var(--skm-qwen-secondary) !important;
+  --app-color-text-foreground: var(--skm-qwen-text) !important;
+  --app-color-text-foreground-secondary: var(--skm-qwen-secondary) !important;
+  --app-color-text-foreground-tertiary: var(--skm-qwen-muted) !important;
+  --app-color-text-secondary: var(--skm-qwen-secondary) !important;
+  --color-token-foreground: var(--skm-qwen-text) !important;
+  --color-token-dropdown-foreground: var(--skm-qwen-text) !important;
+  --color-token-description-foreground: var(--skm-qwen-muted) !important;
+  --color-token-border-default: var(--skm-qwen-border) !important;
+  --user-message-text-color: var(--skm-qwen-text) !important;
+  --user-message-background-color: var(--skm-qwen-bubble) !important;
+  --color-background-user-message: var(--skm-qwen-bubble) !important;
+  --color-background-user-message-compact: var(--skm-qwen-bubble) !important;
+  --color-text-user-message: var(--skm-qwen-text) !important;
+  --segmented-control-background: var(--skm-qwen-hover) !important;
+  --segmented-control-thumb-background: var(--skm-qwen-page) !important;
+  --segmented-control-option-highlight-background-color: var(--skm-qwen-page) !important;
+  /* Current ChatGPT design system (observed in the live DOM). */
+  --color-surface: var(--skm-qwen-page) !important;
+  --color-surface-secondary: var(--skm-qwen-sidebar) !important;
+  --color-surface-tertiary: var(--skm-qwen-hover) !important;
+  --color-surface-card: var(--skm-qwen-page) !important;
+  --color-surface-canvas: var(--skm-qwen-sidebar) !important;
+  --color-surface-elevated: var(--skm-qwen-page) !important;
+  --color-surface-elevated-secondary: var(--skm-qwen-sidebar) !important;
+  --color-surface-recovery: var(--skm-qwen-page) !important;
+  --color-background-composer-surface: var(--skm-qwen-page) !important;
+  --color-background-primary-surface: var(--skm-qwen-hover) !important;
+  --color-text-primary: var(--skm-qwen-text) !important;
+  --color-text-primary-surface: var(--skm-qwen-text) !important;
+  --color-text-primary-soft: var(--skm-qwen-text) !important;
+  --color-text-primary-soft-alt: var(--skm-qwen-text) !important;
+  --color-text-primary-outline: var(--skm-qwen-text) !important;
+  --color-text-primary-outline-hover: var(--skm-qwen-text) !important;
+  --color-text-primary-ghost: var(--skm-qwen-text) !important;
+  --color-text-primary-ghost-hover: var(--skm-qwen-text) !important;
+  --color-text-secondary: var(--skm-qwen-secondary) !important;
+  --color-text-tertiary: var(--skm-qwen-muted) !important;
+  --color-text-quaternary: var(--skm-qwen-faint) !important;
+  --color-border-default: var(--skm-qwen-border) !important;
+  --color-border-primary-surface: var(--skm-qwen-border) !important;
+  --color-token-bg-primary: var(--skm-qwen-page) !important;
+  --color-token-bg-secondary: var(--skm-qwen-sidebar) !important;
+  --color-token-bg-tertiary: var(--skm-qwen-hover) !important;
+  --color-token-main-surface-primary: var(--skm-qwen-page) !important;
+  --color-token-text-primary: var(--skm-qwen-text) !important;
+  --color-token-text-secondary: var(--skm-qwen-secondary) !important;
+  --color-token-text-tertiary: var(--skm-qwen-muted) !important;
+  --color-token-interactive-bg-secondary-hover: var(--skm-qwen-hover) !important;
+  --app-color-background-surface: var(--skm-qwen-page) !important;
+  --app-color-background-surface-under: var(--skm-qwen-sidebar) !important;
+  --app-shell-sidebar-divider: var(--skm-qwen-border) !important;
+  --app-shell-sidebar-popover-background: var(--skm-qwen-page) !important;
+  --app-shell-sidebar-popover-border: var(--skm-qwen-border) !important;
+  --codex-base-surface: var(--skm-qwen-page) !important;
+  --wb-surface-primary: var(--skm-qwen-page) !important;
+  --wb-surface-secondary: var(--skm-qwen-sidebar) !important;
+  --wb-text-primary: var(--skm-qwen-text) !important;
+  /* Legacy ChatGPT components still mounted in conversations. */
   --bg-primary: var(--skm-qwen-page) !important;
   --bg-secondary: var(--skm-qwen-sidebar) !important;
-  --bg-tertiary: var(--skm-qwen-composer) !important;
-  --main-surface-primary: var(--skm-qwen-page) !important;
-  --main-surface-secondary: var(--skm-qwen-sidebar) !important;
-  --main-surface-tertiary: var(--skm-qwen-composer) !important;
-  --sidebar-surface: var(--skm-qwen-sidebar) !important;
-  --sidebar-surface-primary: var(--skm-qwen-sidebar) !important;
-  --bg-secondary-surface: var(--skm-qwen-sidebar) !important;
+  --bg-tertiary: var(--skm-qwen-hover) !important;
   --bg-elevated-primary: var(--skm-qwen-page) !important;
   --bg-elevated-secondary: var(--skm-qwen-sidebar) !important;
+  --main-surface-primary: var(--skm-qwen-page) !important;
+  --main-surface-secondary: var(--skm-qwen-sidebar) !important;
+  --main-surface-tertiary: var(--skm-qwen-hover) !important;
+  --sidebar-surface: var(--skm-qwen-sidebar) !important;
+  --sidebar-surface-primary: var(--skm-qwen-sidebar) !important;
   --text-primary: var(--skm-qwen-text) !important;
-  --text-secondary: var(--skm-qwen-text-2) !important;
-  --text-tertiary: var(--skm-qwen-text-3) !important;
-  --text-quaternary: var(--skm-qwen-text-3) !important;
+  --text-secondary: var(--skm-qwen-secondary) !important;
+  --text-tertiary: var(--skm-qwen-muted) !important;
   --border-light: var(--skm-qwen-border) !important;
-  --border-default: #dcdfe6 !important;
-  --border-medium: #cfd3dc !important;
-  --theme-user-msg-bg: var(--skm-qwen-user-bubble) !important;
+  --border-default: var(--skm-qwen-border) !important;
+  --theme-user-msg-bg: var(--skm-qwen-bubble) !important;
   --theme-user-msg-text: var(--skm-qwen-text) !important;
-  --theme-submit-btn-bg: var(--skm-qwen-purple) !important;
+  --theme-submit-btn-bg: var(--skm-qwen-accent) !important;
   --theme-submit-btn-text: #ffffff !important;
-  --theme-secondary-btn-bg: var(--skm-qwen-sidebar) !important;
-  --theme-secondary-btn-text: var(--skm-qwen-text) !important;
-  --interactive-label-accent-default: var(--skm-qwen-purple) !important;
-  --interactive-bg-secondary-hover: var(--skm-qwen-hover) !important;
+  --interactive-label-accent-default: var(--skm-qwen-accent) !important;
   --surface-hover: var(--skm-qwen-hover) !important;
-  --icon-tertiary: var(--skm-qwen-text-3) !important;
-  --shadow-color-1: rgba(97, 92, 237, 0.05) !important;
-  --shadow-color-2: rgba(97, 92, 237, 0.08) !important;
+  --composer-surface-border-radius: 28px !important;
 }
-
-/* ============ 3. 页面主基底与全局背景 ============ */
-html.skm-mask-on body,
-html.skm-mask-on main,
-html.skm-mask-on [role="main"],
-html.skm-mask-on div[class*="bg-token-main-surface"],
-html.skm-mask-on div[class*="bg-[#212121]"] {
-  background-color: var(--skm-qwen-page) !important;
+html.skm-mask-on body {
+  --color-surface: var(--skm-qwen-sidebar) !important;
+  background: var(--skm-qwen-sidebar) !important;
   color: var(--skm-qwen-text) !important;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif !important;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif !important;
+}
+html.skm-mask-on main { background-color: var(--skm-qwen-page) !important; }
+html.skm-mask-on aside.app-shell-left-panel,
+html.skm-mask-on [data-app-shell-header-slot="start"],
+html.skm-mask-on #app-shell-sidebar,
+html.skm-mask-on #stage-slideover-sidebar,
+html.skm-mask-on nav[aria-label="Chat history"],
+html.skm-mask-on nav[aria-label="聊天记录"] {
+  --color-surface: var(--skm-qwen-sidebar) !important;
+  background: var(--skm-qwen-sidebar) !important;
+  color: var(--skm-qwen-text) !important;
 }
 
-/* ============ 4. 品牌替换：顶部标题栏与 Logo 伪装 ============ */
-/* 替换顶栏 Model Switcher 文案为“通义千问 2.5” */
-html.skm-mask-on button[data-testid="model-switcher-dropdown-button"] div,
-html.skm-mask-on button[data-testid="model-switcher-dropdown-button"] span {
-  display: none !important;
+@media (min-width: 1024px) {
+  html.skm-mask-on main[data-app-shell-main-surface] {
+    margin: 5px 6px 5px 0;
+    border: 0 !important;
+    border-radius: 12px;
+    min-width: 0;
+    overflow: clip;
+  }
 }
-html.skm-mask-on button[data-testid="model-switcher-dropdown-button"]::before {
-  content: "" !important;
-  display: inline-block !important;
-  width: 20px !important;
-  height: 20px !important;
-  margin-right: 6px !important;
-  vertical-align: middle !important;
-  background: #615ced url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z'/%3E%3C/svg%3E") no-repeat center !important;
-  background-size: 65% !important;
-  border-radius: 5px !important;
-}
-html.skm-mask-on button[data-testid="model-switcher-dropdown-button"]::after {
-  content: "通义千问 2.5" !important;
-  font-weight: 600 !important;
-  font-size: 15px !important;
-  color: #1f2329 !important;
-  vertical-align: middle !important;
-}
+html.skm-mask-on #app-shell-sidebar { --height-token-nav-row: 36px; }
 
-/* 侧边栏/顶栏 Brand Logo 替换 */
-html.skm-mask-on a[aria-label="ChatGPT"] svg,
-html.skm-mask-on a[data-testid="logo"] svg {
-  display: none !important;
+/* Respect the native collapsed state and mobile drawer. */
+@media (min-width: 1024px) {
+  html.skm-mask-on [style*="--app-shell-animated-left-panel-width"]:has([data-app-shell-sidebar-trigger][aria-expanded="true"]) {
+    --app-shell-left-panel-width: 232px !important;
+    --app-shell-animated-left-panel-width: 232px !important;
+  }
+  html.skm-mask-on aside.app-shell-left-panel:has([data-app-shell-sidebar-trigger][aria-expanded="true"]) > div {
+    width: 232px !important;
+    min-width: 232px !important;
+  }
 }
-html.skm-mask-on a[aria-label="ChatGPT"]::before,
-html.skm-mask-on a[data-testid="logo"]::before {
-  content: "" !important;
-  display: inline-block !important;
-  width: 22px !important;
-  height: 22px !important;
-  margin-right: 8px !important;
-  vertical-align: middle !important;
-  background: #615ced url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z'/%3E%3C/svg%3E") no-repeat center !important;
-  background-size: 65% !important;
-  border-radius: 6px !important;
+html.skm-mask-on #app-shell-sidebar .sidebar-item {
+  border-radius: 9px !important;
+  transition: background-color 120ms ease;
 }
-html.skm-mask-on a[aria-label="ChatGPT"]::after,
-html.skm-mask-on a[data-testid="logo"]::after {
-  content: "通义千问" !important;
-  font-size: 16px !important;
-  font-weight: 700 !important;
-  color: #1f2329 !important;
-  vertical-align: middle !important;
+html.skm-mask-on #app-shell-sidebar .sidebar-item:hover { background-color: var(--skm-qwen-hover) !important; }
+html.skm-mask-on #app-shell-sidebar .sidebar-item[aria-current="page"] {
+  background-color: var(--skm-qwen-active) !important;
+  color: var(--skm-qwen-accent) !important;
 }
-
-/* ============ 5. 初始对话欢迎语伪装 ============ */
-html.skm-mask-on main svg.icon-lg,
-html.skm-mask-on div[data-testid="logo"] svg {
-  display: none !important;
-}
-html.skm-mask-on main h1,
-html.skm-mask-on main h2,
-html.skm-mask-on [data-testid="greeting-header"] {
+/* Only replace the decorative wordmark, leaving the actual mode button intact. */
+html.skm-mask-on button[aria-label*="当前模式：ChatGPT"] > span > span:first-child,
+html.skm-mask-on button[aria-label*="current mode: ChatGPT" i] > span > span:first-child {
   font-size: 0 !important;
-  line-height: 0 !important;
 }
-html.skm-mask-on main h1::after,
-html.skm-mask-on main h2::after,
-html.skm-mask-on [data-testid="greeting-header"]::after {
-  content: "你好，我是通义千问" !important;
-  font-size: 26px !important;
-  line-height: 1.4 !important;
-  font-weight: 600 !important;
-  color: #1f2329 !important;
-  display: block !important;
-  text-align: center !important;
-  letter-spacing: -0.3px !important;
-  margin-bottom: 8px !important;
-}
-
-/* ============ 6. AI 回复头像伪装为 Qwen 菱形紫星芒 ============ */
-html.skm-mask-on [data-message-author-role="assistant"] svg,
-html.skm-mask-on article [data-message-author-role="assistant"] svg.icon-md {
+html.skm-mask-on button[aria-label*="当前模式：ChatGPT"] > span > span:first-child > span,
+html.skm-mask-on button[aria-label*="current mode: ChatGPT" i] > span > span:first-child > span {
   display: none !important;
 }
-html.skm-mask-on [data-message-author-role="assistant"] [class*="avatar"],
-html.skm-mask-on [data-message-author-role="assistant"] [class*="rounded-full"]:has(svg) {
-  background-color: #615ced !important;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 2L14.5 9.5L22 12L14.5 14.5L12 22L9.5 14.5L2 12L9.5 9.5L12 2Z'/%3E%3C/svg%3E") !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
-  background-size: 60% !important;
-  border-radius: 50% !important;
-  width: 28px !important;
-  height: 28px !important;
-  min-width: 28px !important;
-  box-shadow: 0 2px 6px rgba(97, 92, 237, 0.2) !important;
+html.skm-mask-on button[aria-label*="当前模式：ChatGPT"] > span > span:first-child::after,
+html.skm-mask-on button[aria-label*="current mode: ChatGPT" i] > span > span:first-child::after {
+  content: "Qwen";
+  font-size: 21px;
+  font-weight: 650;
+  letter-spacing: -0.8px;
+  color: var(--skm-qwen-text);
 }
-
-/* ============ 7. 用户提问气泡：优雅淡紫气泡 ============ */
-html.skm-mask-on [data-message-author-role="user"] {
-  background-color: transparent !important;
+/* A greeting is decoration; message headings and their SVGs are never targeted. */
+html.skm-mask-on main:has([data-composer-placement="home"]) h1:not(article *):not([data-message-author-role] *):not(.markdown *) {
+  font-size: 0 !important;
+  line-height: 1.4 !important;
 }
-html.skm-mask-on [data-message-author-role="user"] > div,
-html.skm-mask-on [data-message-author-role="user"] div[class*="bg-"] {
-  background-color: #eff0fe !important;
-  color: #1f2329 !important;
-  border-radius: 16px !important;
-  padding: 10px 16px !important;
-  border: 1px solid rgba(97, 92, 237, 0.12) !important;
-  box-shadow: 0 1px 4px rgba(97, 92, 237, 0.04) !important;
+html.skm-mask-on main:has([data-composer-placement="home"]) h1:not(article *):not([data-message-author-role] *):not(.markdown *)::after {
+  content: "有什么可以帮你的吗？";
+  display: block;
+  color: var(--skm-qwen-text);
+  font-size: clamp(22px, 2vw, 26px);
+  font-weight: 400;
+  letter-spacing: -0.4px;
 }
-
-/* AI 回复排版：纯文本无气泡 */
-html.skm-mask-on article[data-testid^="conversation-turn"] [data-message-author-role="assistant"],
-html.skm-mask-on [data-message-author-role="assistant"] {
-  font-size: 15px !important;
-  line-height: 1.75 !important;
-  color: var(--skm-qwen-text) !important;
-}
-
-/* ============ 8. 输入框：Qwen 纯白质感 + 24px 大圆角 + 聚焦紫光 ============ */
-html.skm-mask-on #prompt-textarea,
-html.skm-mask-on div[contenteditable="true"].ProseMirror,
-html.skm-mask-on form div[contenteditable="true"],
-html.skm-mask-on textarea[data-id] {
-  border-radius: 20px !important;
-  font-size: 15px !important;
-  color: var(--skm-qwen-text) !important;
-}
-
-/* 输入框外层容器 */
-html.skm-mask-on form:has(#prompt-textarea),
-html.skm-mask-on form:has(div[contenteditable="true"].ProseMirror),
-html.skm-mask-on div[data-testid="composer"] {
-  border-radius: 24px !important;
+/* Style the composer surface, not every nested div or the editor's document. */
+html.skm-mask-on [data-composer-surface],
+html.skm-mask-on form:has([data-composer-markdown]),
+html.skm-mask-on form:has(#prompt-textarea) {
   background-color: var(--skm-qwen-composer) !important;
   border: 1px solid var(--skm-qwen-border) !important;
-  box-shadow: 0 4px 20px var(--skm-qwen-shadow), 0 1px 3px rgba(0, 0, 0, 0.02) !important;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  border-radius: 28px !important;
+  box-shadow: 0 2px 8px #25214b05 !important;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
 }
-
-/* 输入框聚焦态 */
-html.skm-mask-on form:has(#prompt-textarea):focus-within,
-html.skm-mask-on form:has(div[contenteditable="true"].ProseMirror):focus-within,
-html.skm-mask-on div[data-testid="composer"]:focus-within {
-  border-color: var(--skm-qwen-purple) !important;
-  box-shadow: 0 4px 24px rgba(97, 92, 237, 0.14), 0 0 0 1.5px rgba(97, 92, 237, 0.3) !important;
+html.skm-mask-on [data-composer-surface]:focus-within,
+html.skm-mask-on form:has([data-composer-markdown]):focus-within,
+html.skm-mask-on form:has(#prompt-textarea):focus-within {
+  border-color: var(--skm-qwen-focus) !important;
+  box-shadow: 0 0 0 3px var(--skm-qwen-accent)0c !important;
 }
-
-/* 占位符替换为“向通义千问提问...” */
-html.skm-mask-on #prompt-textarea::placeholder,
-html.skm-mask-on textarea::placeholder {
-  color: transparent !important;
-}
-html.skm-mask-on [data-placeholder]::before,
-html.skm-mask-on p.placeholder::before {
-  content: "向通义千问提问..." !important;
-  color: #8f959e !important;
-  font-size: 15px !important;
-}
-
-/* ============ 9. 发送按钮：Qwen 品牌紫圆形按钮 ============ */
-html.skm-mask-on button[data-testid="send-button"],
-html.skm-mask-on button[aria-label*="send prompt" i],
-html.skm-mask-on form button[type="submit"] {
-  border-radius: 9999px !important;
-  background-color: var(--skm-qwen-purple) !important;
-  color: #ffffff !important;
-  transition: background-color 0.15s ease, transform 0.15s ease !important;
-}
-html.skm-mask-on button[data-testid="send-button"]:hover,
-html.skm-mask-on button[aria-label*="send prompt" i]:hover,
-html.skm-mask-on form button[type="submit"]:hover {
-  background-color: var(--skm-qwen-purple-hover) !important;
-  transform: scale(1.02);
-}
-
-/* ============ 10. 底部免责声明替换为千问官方口吻 ============ */
-html.skm-mask-on form + div,
-html.skm-mask-on div[class*="text-token-text-tertiary"],
-html.skm-mask-on div.text-xs:has(a[href*="openai.com"]) {
-  font-size: 0 !important;
-  color: transparent !important;
-}
-html.skm-mask-on form + div::after,
-html.skm-mask-on div[class*="text-token-text-tertiary"]::after,
-html.skm-mask-on div.text-xs:has(a[href*="openai.com"])::after {
-  content: "通义千问生成的内容仅供参考，不代表任何态度或立场" !important;
-  font-size: 12px !important;
-  color: #8f959e !important;
-  display: block !important;
-  text-align: center !important;
-  margin-top: 4px !important;
-}
-
-/* ============ 11. 侧边栏与导航 ============ */
-html.skm-mask-on nav[aria-label="Chat history"],
-html.skm-mask-on #stage-slideover-sidebar,
-html.skm-mask-on aside {
-  background-color: var(--skm-qwen-sidebar) !important;
-  border-right: 1px solid var(--skm-qwen-border) !important;
-}
-
-/* 新建对话按钮 */
-html.skm-mask-on a[data-testid="create-new-chat-button"],
-html.skm-mask-on nav a[aria-label="New chat"],
-html.skm-mask-on a[href="/"] button {
-  border-radius: 12px !important;
-  border: 1px solid var(--skm-qwen-border) !important;
-  background-color: #ffffff !important;
+html.skm-mask-on [data-composer-markdown],
+html.skm-mask-on #prompt-textarea {
   color: var(--skm-qwen-text) !important;
-  transition: all 0.2s ease !important;
+  font-size: 15px !important;
+  caret-color: var(--skm-qwen-accent);
 }
-html.skm-mask-on a[data-testid="create-new-chat-button"]:hover,
-html.skm-mask-on nav a[aria-label="New chat"]:hover {
-  background-color: var(--skm-qwen-purple-light) !important;
-  border-color: var(--skm-qwen-purple) !important;
-  color: var(--skm-qwen-purple) !important;
+html.skm-mask-on [data-composer-markdown] p[data-empty-paragraph="true"][data-placeholder]::before {
+  content: "有什么我能帮你的吗？" !important;
+  color: var(--skm-qwen-faint) !important;
 }
-
-/* 会话列表选中/悬停高亮 */
-html.skm-mask-on nav a[href*="/c/"]:hover,
-html.skm-mask-on nav a[href^="/c/"]:hover {
-  background-color: var(--skm-qwen-purple-light) !important;
-  color: var(--skm-qwen-purple) !important;
-  border-radius: 8px !important;
+html.skm-mask-on button[data-testid="send-button"],
+html.skm-mask-on form button[aria-label="发送"],
+html.skm-mask-on form button[aria-label="Send" i] {
+  background: var(--skm-qwen-accent) !important;
+  color: #ffffff !important;
+  border-radius: 50% !important;
 }
-
-/* ============ 12. 滚动条与选中文本 ============ */
-html.skm-mask-on ::selection {
-  background-color: #d2d0f9 !important; /* Qwen Lilac Pale */
-  color: #1f2329 !important;
+html.skm-mask-on form button[aria-label="发送"]:disabled,
+html.skm-mask-on button[data-testid="send-button"]:disabled { opacity: .4 !important; }
+html.skm-mask-on [data-message-author-role="user"] { --theme-user-msg-bg: var(--skm-qwen-bubble) !important; }
+html.skm-mask-on [data-message-author-role="assistant"] {
+  color: var(--skm-qwen-text) !important;
+  font-size: 15px;
+  line-height: 1.75;
 }
-html.skm-mask-on ::-webkit-scrollbar {
-  width: 8px !important;
-  height: 8px !important;
+html.skm-mask-on [data-app-shell-titlebar] [role="group"][aria-label="撰写器模式"] {
+  background: var(--skm-qwen-hover) !important;
+  border: 1px solid var(--skm-qwen-border);
+  height: 34px;
 }
-html.skm-mask-on ::-webkit-scrollbar-thumb {
-  background-color: #d8dae5 !important;
-  border-radius: 6px !important;
+html.skm-mask-on [data-app-shell-titlebar] [role="group"][aria-label="撰写器模式"] > span {
+  background: transparent !important;
+  box-shadow: none !important;
 }
-html.skm-mask-on ::-webkit-scrollbar-thumb:hover {
-  background-color: #c4c7d6 !important;
+html.skm-mask-on [data-app-shell-titlebar] [role="group"][aria-label="撰写器模式"] button {
+  color: var(--skm-qwen-muted) !important;
 }
-html.skm-mask-on ::-webkit-scrollbar-track {
-  background-color: transparent !important;
+html.skm-mask-on [data-app-shell-titlebar] [role="group"][aria-label="撰写器模式"] button[aria-pressed="true"] {
+  color: var(--skm-qwen-accent) !important;
+  background: var(--skm-qwen-page) !important;
+  box-shadow: 0 1px 3px var(--skm-qwen-text)0c;
 }
+/* Extra ChatGPT features keep their native position and hit targets. */
+html.skm-mask-on [data-app-shell-titlebar] [role="group"][aria-label="撰写器模式"],
+html.skm-mask-on main:has([data-composer-placement="home"]) [class~="group/home-suggestion-list-item"],
+html.skm-mask-on #app-shell-sidebar [data-sidebar-destination="builtin:automations"],
+html.skm-mask-on #app-shell-sidebar [data-sidebar-destination="builtin:library"],
+html.skm-mask-on #app-shell-sidebar [data-sidebar-destination="builtin:skills"],
+html.skm-mask-on #app-shell-sidebar .sidebar-item[aria-haspopup="menu"]:not([data-sidebar-destination]),
+html.skm-mask-on #app-shell-sidebar .sidebar-item[aria-label="定时任务"],
+html.skm-mask-on #app-shell-sidebar .sidebar-item[aria-label="资料库"],
+html.skm-mask-on #app-shell-sidebar .sidebar-item[aria-label="插件"],
+html.skm-mask-on #app-shell-sidebar .sidebar-item[aria-label="探索"],
+html.skm-mask-on #app-shell-sidebar .sidebar-item[aria-label="Tasks"],
+html.skm-mask-on #app-shell-sidebar .sidebar-item[aria-label="Library"],
+html.skm-mask-on #app-shell-sidebar .sidebar-item[aria-label="Apps"],
+html.skm-mask-on #app-shell-sidebar .sidebar-item[aria-label="Explore"] {
+  opacity: var(--skm-extra-opacity, .25) !important;
+  transition: opacity 150ms ease;
+}
+html.skm-mask-on [data-app-shell-titlebar] [role="group"][aria-label="撰写器模式"]:is(:hover, :focus-within),
+html.skm-mask-on main:has([data-composer-placement="home"]) [class~="group/home-suggestion-list-item"]:is(:hover, :focus-within),
+html.skm-mask-on #app-shell-sidebar .sidebar-item:is(:hover, :focus-within) {
+  opacity: 1 !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  html.skm-mask-on [data-app-shell-titlebar] [role="group"],
+  html.skm-mask-on [class~="group/home-suggestion-list-item"],
+  html.skm-mask-on #app-shell-sidebar .sidebar-item { transition: none; }
+}
+html.skm-mask-on ::selection { background: var(--skm-qwen-selection); }
+html.skm-mask-on * { scrollbar-color: var(--skm-qwen-scrollbar) transparent; }
 `.trim()

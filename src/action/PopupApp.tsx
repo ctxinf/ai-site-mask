@@ -11,6 +11,7 @@ export default function PopupApp() {
   const [mode, setMode] = useState<MaskMode>('original')
   const [theme, setTheme] = useState<string>('qwen')
   const [autoApply, setAutoApply] = useState(false)
+  const [extraOpacity, setExtraOpacity] = useState(25)
   const [ready, setReady] = useState(false)
   const [error, setError] = useState('')
 
@@ -21,6 +22,16 @@ export default function PopupApp() {
     chrome.tabs
       .query({active: true, currentWindow: true})
       .then(async (tabs) => {
+        // The workflow opens the popup as a tab. Resolve the most recently used
+        // supported page in that window instead of treating the extension as a site.
+        if (tabs[0]?.url?.startsWith(chrome.runtime.getURL(''))) {
+          tabs = (await chrome.tabs.query({currentWindow: true}))
+            .filter((tab) => {
+              try { return SUPPORTED_HOSTS.includes(new URL(tab.url ?? '').hostname) }
+              catch { return false }
+            })
+            .sort((a, b) => (b.lastAccessed ?? 0) - (a.lastAccessed ?? 0))
+        }
         let h = ''
         try {
           h = new URL(tabs[0]?.url ?? '').hostname
@@ -39,6 +50,7 @@ export default function PopupApp() {
           setMode(state.mode)
           setTheme(state.theme || (h.includes('claude') ? 'doubao' : 'qwen'))
           setAutoApply(state.autoApply)
+          setExtraOpacity(Math.round((state.extraOpacity ?? 0.25) * 100))
         }
         setReady(true)
       })
@@ -93,6 +105,14 @@ export default function PopupApp() {
     } catch (err) {
       setError(String(err))
     }
+  }
+
+  async function saveExtraOpacity(value: number) {
+    if (!host) return
+    setError('')
+    try {
+      await setSiteState(host, {extraOpacity: value / 100})
+    } catch (err) { setError(String(err)) }
   }
 
   return (
@@ -153,6 +173,20 @@ export default function PopupApp() {
                   DeepSeek
                 </button>
               </div>
+              {theme === 'qwen' && (
+                <label className="extra-opacity">
+                  <span>额外入口显示程度：{extraOpacity}%</span>
+                  <input type="range" min="0" max="50" step="5"
+                    aria-label="额外入口显示程度"
+                    value={extraOpacity}
+                    onChange={(event) => setExtraOpacity(Number(event.currentTarget.value))}
+                    onPointerUp={(event) => saveExtraOpacity(Number(event.currentTarget.value))}
+                    onKeyUp={(event) => saveExtraOpacity(Number(event.currentTarget.value))}
+                    onBlur={(event) => saveExtraOpacity(Number(event.currentTarget.value))}
+                  />
+                  <small>保留原位；鼠标悬停或键盘聚焦时完整显示。</small>
+                </label>
+              )}
             </div>
           )}
 

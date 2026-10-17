@@ -3,6 +3,7 @@ import {getSiteState, onSiteStateChange} from './storage'
 export type CssProvider = string | ((theme?: string) => string)
 
 export interface MaskEngineOptions {
+  forceLight?: (theme?: string) => boolean
   getTitle?: (theme?: string) => string | undefined
   getFavicon?: (theme?: string) => string | undefined
 }
@@ -19,6 +20,7 @@ export class MaskEngine {
   private originalFavicon: string | null = null
   private wasDark = false
   private classObserver: MutationObserver | null = null
+  private forceLight = true
 
   constructor(
     private readonly siteId: string,
@@ -39,8 +41,10 @@ export class MaskEngine {
   }
 
   /** 注入（或复用）style 标签并挂上开关 class；幂等。 */
-  apply(theme?: string): void {
-    const cssText = this.resolveCss(theme)
+  apply(theme?: string, extraOpacity = 0.25): void {
+    this.forceLight = this.options?.forceLight?.(theme) ?? true
+    const opacity = Number.isFinite(extraOpacity) ? Math.max(0, Math.min(0.5, extraOpacity)) : 0.25
+    const cssText = `${this.resolveCss(theme)}\nhtml.skm-mask-on { --skm-extra-opacity: ${opacity}; }`
     let el = this.styleEl
     if (!el) {
       el = document.createElement('style')
@@ -54,7 +58,11 @@ export class MaskEngine {
     document.documentElement?.classList.add('skm-mask-on')
 
     // 中和 ChatGPT 原生深色模式，强制统一到浅色高质感体系
-    if (document.documentElement?.classList.contains('dark')) {
+    if (!this.forceLight && this.wasDark) {
+      document.documentElement.classList.add('dark')
+      this.wasDark = false
+    }
+    if (this.forceLight && document.documentElement?.classList.contains('dark')) {
       this.wasDark = true
       document.documentElement.classList.remove('dark')
     }
@@ -62,6 +70,7 @@ export class MaskEngine {
       this.classObserver = new MutationObserver(() => {
         if (
           document.documentElement?.classList.contains('skm-mask-on') &&
+          this.forceLight &&
           document.documentElement?.classList.contains('dark')
         ) {
           this.wasDark = true
@@ -76,6 +85,9 @@ export class MaskEngine {
 
     // 标题伪装
     const disguisedTitle = this.options?.getTitle?.(theme)
+    // A theme switch must replace the observer's captured title as well.
+    this.titleObserver?.disconnect()
+    this.titleObserver = null
     if (disguisedTitle) {
       if (this.originalTitle === null) {
         this.originalTitle = document.title
@@ -176,12 +188,12 @@ export class MaskEngine {
 
     const [state] = await Promise.all([getSiteState(host), docElReady])
     if (state.mode === 'mask' && state.autoApply) {
-      this.apply(state.theme)
+      this.apply(state.theme, state.extraOpacity)
     }
 
     this.unsubscribe = onSiteStateChange(host, (next) => {
       if (next.mode === 'mask') {
-        this.apply(next.theme)
+        this.apply(next.theme, next.extraOpacity)
       } else {
         this.remove()
       }

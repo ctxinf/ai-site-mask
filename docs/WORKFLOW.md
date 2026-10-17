@@ -103,3 +103,27 @@ CDP 外部浏览器由 Extension.js 所有；agent-browser close 断开其连接
 
 原生命令参考：[agent-browser Commands](https://agent-browser.dev/commands)、
 [CDP 与标签页绑定](https://agent-browser.dev/cdp-mode)。
+
+## 复用已经打开的 Brave（默认 profile）
+
+在现有 Brave 的 `brave://inspect/#remote-debugging` 开启远程调试后：
+
+```bash
+WORKFLOW_BROWSER=brave npm run browser:page -- tab list --json
+WORKFLOW_BROWSER=brave npm run browser:page -- tab <targetId>
+WORKFLOW_BROWSER=brave npm run shot:page -- --out .workflow/shots/current
+```
+
+封装从默认 profile 的 `DevToolsActivePort` 读取本次 WebSocket 地址，只连接现有
+进程，不启动浏览器。非默认文件位置可通过 `WORKFLOW_DEVTOOLS_FILE` 指定。
+需要已有 `dist/extension-js/brave/ready.json` 构建记录（`npm run build -- --browser brave`）。
+当前 Brave 如果手动加载的是 `dist/chromium`，popup 命令还应传
+`WORKFLOW_EXTENSION_ID=<该已安装扩展的ID>`，否则默认使用 Brave 构建的 ID。
+
+`npm run dev:brave` 的 `--profile false` 会将启动请求交给现有默认进程，但
+Extension.js 可能将启动子进程退出记录成 `browser_exited`；这不表示现有 Brave
+已退出。复用模式不依赖该子进程的存活状态。构建更新后只重载本项目扩展，
+无需重启 Brave。自动应用未开启时，页面刷新后应手动重新开启 Mask。
+
+截图会先激活绑定标签并等待字体和两帧绘制，再把 agent-browser 返回的实际图片复制
+到指定路径；页面就绪条件支持真实站点 `main`，不再强制等待模板横幅。

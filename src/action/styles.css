@@ -116,3 +116,13 @@
   height: 18px;
   accent-color: #2563eb;
 }
+
+.extra-opacity {
+  display: grid;
+  gap: 7px;
+  margin-top: 14px;
+  font-size: 12px;
+  color: #4b5563;
+}
+.extra-opacity input { width: 100%; margin: 0; accent-color: #615ced; }
+.extra-opacity small { color: #73757c; line-height: 1.5; }

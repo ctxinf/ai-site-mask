@@ -86,3 +86,29 @@ CDP `Runtime.evaluate` 调用控件 `.click()`、读取 DOM，并通过
 - `.workflow/shots/popup.png`、`page.png`：原有截图脚本对生产构建的截图。
 
 `.workflow/` 仍按仓库原有规则忽略，不包含在 Git 变更中。
+
+## Qwen 实页改进（2026-10-18）
+
+本轮复用用户已打开、已登录的 Brave 默认 profile，通过用户开启的远程调试接口连接。
+没有为 Brave 新建 profile。实际安装目录为 `dist/chromium`，已生产构建、重载扩展，
+刷新实页后通过 popup 的「原版 → Mask」按钮启用，确认效果来自正式扩展而非仅临时 CSS。
+
+参考图为 `.workflow/shots/manual/qwen-light.png`、`q wen-dark.png`。
+最终截图为 `.workflow/shots/final-light/page.png`、`final-dark/page.png`。
+
+| 检查 | 结果 |
+| --- | --- |
+| TypeScript / 生产构建 | `tsc --noEmit`、`npm run build` 通过 |
+| 真正的扩展开关 | 原版/Mask 可切换；刷新后自动应用为 false 时不自动开启，符合原设置 |
+| 深色主题 | 保留原站 `data-theme=dark`，color-scheme 为 dark，侧栏 232px，无横向溢出 |
+| 浅色预览 | 临时变更 DOM 的 data-theme 查看浅色后恢复 dark，未改账户设置 |
+| 编辑器 | 可输入测试文字，发送按钮启用；未发送消息，已用 Control+A / Backspace 清空草稿 |
+| 模型菜单 | 真实模型按钮可展开菜单，包含「选择模型」「强度」 |
+| 附件入口 | 真实按钮可点击并变为 aria-expanded=true；未上传文件 |
+| 正文选择器回归 | 临时 article/assistant fixture 的 h1 无伪元素替换，SVG display=block；验证后已移除 |
+| 透明度滑块 | 实际键盘 End 保存 0.5，Home 保存 0；对应 chrome.storage.sync 值正确 |
+| 透明入口恢复 | 0% 的顶部模式控件 hover 后条件等待确认 opacity=1；默认恢复到 25% |
+| 页面截图 Pipeline | `WORKFLOW_BROWSER=brave npm run shot:page` 成功写到指定目录 |
+
+额外入口按用户要求保留原位置及控件，不删除、不重排；静止透明度可调 0–50%，
+hover/focus-within 恢复完整显示。尚未验证消息发送/流式输出、真实文件上传和移动端。

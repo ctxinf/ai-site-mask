@@ -59,3 +59,22 @@ CSS 变量，组件全部消费变量）。换肤第一层直接重定义 token�
 - `chat.openai.com` 旧域名沿用同一套 token 变量名，理论兼容，未实测
 - 站点改版导致 token 更名时，主题退化为"形状层仍生效、颜色回原版"，
   不会破坏功能；届时对照 catppuccin 仓库更新变量表即可
+
+## Qwen 主题更新（2026-10-18）
+
+本节描述当前 `theme-qwen.ts`，上文 DeepSeek 的说明不适用于 Qwen。
+
+参考用户提供的 `.workflow/shots/manual/qwen-light.png` 与
+`q wen-dark.png`，并在现有 Brave 中验证。当前 ChatGPT 使用新版
+`--color-surface`、`--color-text-*`、`data-app-shell-*` 与
+`data-composer-markdown`，旧变量同时保留以兼容遗留组件。
+
+- 根据原站 `html[data-theme="dark"]` / `.dark` 切换两套调色板；Qwen 不再强制移除深色 class。
+- 桌面展开侧栏 232px；主面板保留窄外边距和圆角。折叠状态及移动端交给原站。
+- 品牌替换限定在模式按钮里的装饰字标；保留其按钮与菜单，不伪造模型版本。
+- 欢迎语限定在存在首页 composer 的主区，排除 article、消息与 markdown；不再批量改 h2、隐藏 assistant SVG 或替换通用辅助文字。
+- 额外入口保留原布局与点击目标。模式切换、首页建议与 ChatGPT 特有侧栏入口默认 25% 不透明度，popup 可调 0–50%；hover / focus-within 恢复到 100%。不重排这些入口，不删除。
+- 设置按站点保存到 `chrome.storage.sync`，旧设置自动补为 25%。释放滑块或键盘操作结束后保存，避免拖动时高频写入 sync。
+
+本次验证覆盖桌面首页、输入与清空、菜单展开、模式开关及 CSS 正文选择器回归；
+未发送消息，尚未完整验证真实流式输出、附件上传及移动端。
