@@ -72,6 +72,9 @@
   "web_accessible_resources": [
     {
       "resources": [
+        "images/deepseek-logo.svg",
+        "images/deepseek-icon.svg",
+        "images/deepseek-favicon.svg",
         "images/qwen-logo.svg",
         "images/qwen-logo-dark.svg",
         "images/qwen-favicon.png"

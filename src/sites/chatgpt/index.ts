@@ -1,5 +1,6 @@
 import {MaskEngine} from '../../core/mask'
 import {qwenThemeCss} from './theme-qwen'
+import {mountDeepseekUi} from './deepseek-ui'
 import {deepseekThemeCss} from './theme-deepseek'
 
 // chatgpt.com / chat.openai.com 独立入口。
@@ -15,12 +16,13 @@ function resolveChatGptTheme(theme?: string): string {
   return qwenThemeCss // 默认通义千问 (Qwen)
 }
 
+const DEEPSEEK_FAVICON = chrome.runtime.getURL('images/deepseek-favicon.svg')
 const QWEN_FAVICON = chrome.runtime.getURL('images/qwen-favicon.png')
 
 const engine = new MaskEngine('chatgpt', resolveChatGptTheme, {
-  forceLight: (theme) => theme === 'deepseek',
+  forceLight: () => false,
   getTitle: (theme) => (theme === 'deepseek' ? 'DeepSeek' : 'Qwen'),
-  getFavicon: (theme) => (theme === 'deepseek' ? undefined : QWEN_FAVICON),
+  getFavicon: (theme) => (theme === 'deepseek' ? DEEPSEEK_FAVICON : QWEN_FAVICON),
 })
 
 // 每次注入到页面都会打这行，`npm run logs:content` 里能看到。
@@ -31,11 +33,13 @@ console.log('[skm][chatgpt] content script 已注入:', location.href)
  * 返回的函数在 HMR/卸载时被调用做清理。不要自己调用它。
  */
 export default function initial() {
+  const cleanupUi = mountDeepseekUi()
   engine
     .boot(location.hostname)
     .catch((err) => console.error('[skm][chatgpt] boot 失败:', err))
 
   return () => {
+    cleanupUi()
     engine.destroy()
   }
 }
