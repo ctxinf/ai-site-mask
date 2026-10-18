@@ -38,3 +38,6 @@ extension-env.d.ts
 *.md
 /docs/
 *.prompt.txt
+
+# Private local agent instructions
+/AGENTS.md
