@@ -395,6 +395,84 @@ html.skm-mask-on [data-app-shell-titlebar] button:is([aria-label*="临时"], [ar
 }
 html.skm-mask-on [data-app-shell-titlebar] button:is([aria-label*="临时"], [aria-label*="temporary" i]):is(:hover, :focus-visible, [data-state="open"]) { opacity: 1 !important; }
 
+html.skm-mask-on { --skm-share-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M7.95889%201.52285C7.95888%200.826234%208.76055%200.467983%209.27669%200.875208L9.37524%200.967191L15.1317%207.18358C15.5582%207.64419%2015.5582%208.35614%2015.1317%208.81676L9.37524%2015.0331C8.87034%2015.578%207.95888%2015.2205%207.95889%2014.4775V10.8207C7.10614%2010.8432%206.31361%2010.9316%205.45468%2011.2515C4.39484%2011.6463%203.18248%2012.413%201.64676%2013.9425C1.4533%2014.135%201.18329%2014.1696%200.969086%2014.0908C0.74748%2014.0091%200.547307%2013.7879%200.54859%2013.4844L0.55516%2013.1315C0.618924%2011.3494%201.11153%209.29838%202.27656%207.63787C3.45289%205.96147%205.29554%204.71635%207.95889%204.54797V1.52285ZM9.20911%205.13366C9.20899%205.50567%208.9031%205.77687%208.56523%205.77755C5.99383%205.78282%204.33736%206.8762%203.29964%208.35496C2.54519%209.43014%202.10739%2010.7283%201.9152%2011.9939C3.04749%2011.0323%204.0569%2010.4385%205.01917%2010.0801C6.29638%209.60449%207.4406%209.56343%208.56429%209.56295C8.9178%209.5628%209.20894%209.84909%209.20911%2010.2068L9.20817%2013.3737L14.1837%208.00017L9.20817%202.62571L9.20911%205.13366Z%22/%3E%3C/svg%3E"); }
+/* A single quiet disclosure controls all optional sidebar sections. */
+html.skm-mask-on .skm-deepseek-fold { margin: 0 10px; height: 20px; }
+html.skm-mask-on .skm-deepseek-fold summary {
+  display: flex; align-items: center; width: 28px; height: 20px; padding: 0 4px;
+  list-style: none; opacity: 0; transition: opacity 150ms ease;
+}
+html.skm-mask-on .skm-deepseek-fold summary::-webkit-details-marker { display: none; }
+html.skm-mask-on .skm-deepseek-fold summary::before {
+  content: ''; width: 0; height: 0; border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent; border-inline-start: 5px solid currentColor;
+}
+html.skm-mask-on .skm-deepseek-fold[open] summary::before { transform: rotate(90deg); }
+html.skm-mask-on .skm-deepseek-fold:is(:hover, :focus-within) summary { opacity: 1; }
+html.skm-mask-on .skm-deepseek-fold summary:hover { background: transparent; }
+html.skm-mask-on [data-app-action-sidebar-section-heading="Recents"] [data-app-action-sidebar-section-toggle] > span:first-child {
+  font-size: 0 !important;
+}
+html.skm-mask-on [data-app-action-sidebar-section-heading="Recents"] [data-app-action-sidebar-section-toggle] > span:first-child::after {
+  content: '今天'; font-size: 12px; font-weight: 400;
+}
+html.skm-mask-on div:has([data-skm-account]) > div[aria-hidden="true"][class~="border-t-hairline"] { border-top: 0 !important; }
+/* Account decoration leaves the native profile menu button in place. */
+html.skm-mask-on [data-skm-account] { border: 0 !important; min-height: 48px; }
+html.skm-mask-on [data-skm-account]::before { display: none !important; }
+html.skm-mask-on [data-skm-account] > .pointer-events-none .flex-col { visibility: hidden; }
+html.skm-mask-on .skm-deepseek-account-label {
+  position: absolute; inset-inline-start: 42px; inset-inline-end: 32px; top: 50%; transform: translateY(-50%);
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+  font-size: 13px; color: var(--skm-text-2); pointer-events: none;
+}
+html.skm-mask-on [data-skm-account]::after {
+  content: '…'; position: absolute; inset: auto !important; inset-inline-end: 12px !important; top: 50% !important; transform: translateY(-50%);
+  width: auto !important; height: auto !important; border: 0 !important; background: transparent !important;
+  font-size: 19px; color: var(--skm-text-3); pointer-events: none;
+}
+html.skm-mask-on [data-composer-navigation-target="reasoning"] {
+  inset-inline-start: auto; inset-inline-end: 100px; opacity: 0 !important;
+  transition: opacity 150ms ease;
+}
+html.skm-mask-on [data-composer-navigation-target="reasoning"]:is(:hover, :focus-visible, [data-state="open"]) { opacity: 1 !important; }
+html.skm-mask-on .skm-deepseek-toggles {
+  position: absolute; inset-inline-start: 12px; bottom: 12px; display: flex; gap: 8px;
+}
+html.skm-mask-on .skm-deepseek-toggle {
+  display: inline-flex; align-items: center; gap: 4px; height: 34px; padding: 0 10px;
+  border: 1px solid var(--skm-border); border-radius: 18px;
+  background: transparent; color: var(--skm-text); font: inherit; font-size: 13px; cursor: pointer;
+}
+html.skm-mask-on .skm-deepseek-toggle:hover { background: var(--skm-hover); }
+html.skm-mask-on .skm-deepseek-toggle[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--skm-blue) 45%, transparent);
+  background: color-mix(in srgb, var(--skm-blue) 9%, var(--skm-composer)); color: var(--skm-blue);
+}
+html.skm-mask-on .skm-deepseek-toggle::before {
+  content: ''; width: 14px; height: 14px; background: currentColor;
+}
+html.skm-mask-on .skm-deepseek-toggle-think::before {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cg fill='none' stroke='black' stroke-width='1.3'%3E%3Cellipse cx='8' cy='8' rx='7' ry='3' transform='rotate(45 8 8)'/%3E%3Cellipse cx='8' cy='8' rx='7' ry='3' transform='rotate(-45 8 8)'/%3E%3C/g%3E%3Ccircle cx='8' cy='8' r='1.2'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+html.skm-mask-on .skm-deepseek-toggle-search::before {
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cg fill='none' stroke='black' stroke-width='1.3'%3E%3Ccircle cx='8' cy='8' r='6.8'/%3E%3Cellipse cx='8' cy='8' rx='2.9' ry='6.8'/%3E%3Cpath d='M1.2 8h13.6'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+}
+html.skm-mask-on [data-app-shell-titlebar] button:is([aria-label="分享"], [aria-label="Share" i]) {
+  position: relative; width: 32px; min-width: 32px; padding: 0 !important;
+  border: 0 !important; background: transparent !important; font-size: 0 !important;
+}
+html.skm-mask-on [data-app-shell-titlebar] button:is([aria-label="分享"], [aria-label="Share" i]) > * { opacity: 0 !important; }
+html.skm-mask-on [data-app-shell-titlebar] button:is([aria-label="分享"], [aria-label="Share" i])::after {
+  content: ''; position: absolute; width: 16px; height: 16px; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  background: currentColor; mask: var(--skm-share-icon) center / contain no-repeat;
+}
+@media (max-width: 480px) {
+  html.skm-mask-on .skm-deepseek-toggles { gap: 4px; inset-inline-start: 8px; }
+  html.skm-mask-on .skm-deepseek-toggle { padding-inline: 7px; font-size: 12px; }
+  html.skm-mask-on [data-composer-navigation-target="reasoning"] { max-width: 64px; padding-inline: 4px !important; }
+}
+
 /* ============ 8. 滚动条：细、浅灰 ============ */
 html.skm-mask-on ::-webkit-scrollbar {
   width: 10px !important;

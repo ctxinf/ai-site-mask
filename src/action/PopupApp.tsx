@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react'
 import {
   SUPPORTED_HOSTS,
   DEFAULT_QWEN_MODEL_LABEL,
+  DEFAULT_DEEPSEEK_USERNAME,
   getSiteState,
   setSiteState,
   type MaskMode,
@@ -14,6 +15,7 @@ export default function PopupApp() {
   const [autoApply, setAutoApply] = useState(false)
   const [extraOpacity, setExtraOpacity] = useState(25)
   const [qwenModelLabel, setQwenModelLabel] = useState(DEFAULT_QWEN_MODEL_LABEL)
+  const [deepseekUsername, setDeepseekUsername] = useState(DEFAULT_DEEPSEEK_USERNAME)
   const [ready, setReady] = useState(false)
   const [error, setError] = useState('')
 
@@ -49,6 +51,7 @@ export default function PopupApp() {
           if (cancelled) {
             return
           }
+          setDeepseekUsername(state.deepseekUsername ?? DEFAULT_DEEPSEEK_USERNAME)
           setQwenModelLabel(state.qwenModelLabel ?? DEFAULT_QWEN_MODEL_LABEL)
           setMode(state.mode)
           setTheme(state.theme || (h.includes('claude') ? 'doubao' : 'qwen'))
@@ -176,6 +179,21 @@ export default function PopupApp() {
                   DeepSeek
                 </button>
               </div>
+              {theme === 'deepseek' && (
+                <label className="extra-opacity">
+                  <span>显示用户名</span>
+                  <input type="text" aria-label="DeepSeek 显示用户名" maxLength={40}
+                    value={deepseekUsername} placeholder={DEFAULT_DEEPSEEK_USERNAME}
+                    onChange={event => setDeepseekUsername(event.currentTarget.value)}
+                    onBlur={async () => {
+                      try {
+                        const state = await setSiteState(host, {deepseekUsername})
+                        setDeepseekUsername(state.deepseekUsername ?? DEFAULT_DEEPSEEK_USERNAME)
+                        setError('')
+                      } catch (err) { setError(String(err)) }
+                    }} />
+                </label>
+              )}
               {theme === 'qwen' && (
                 <>
                 <label className="extra-opacity">
