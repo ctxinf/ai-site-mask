@@ -30,7 +30,7 @@ export interface MaskStorageSchema {
 }
 
 /** 首批支持换肤的站点 host */
-export const SUPPORTED_HOSTS = ['chatgpt.com', 'chat.openai.com', 'claude.ai']
+export const SUPPORTED_HOSTS = ['chatgpt.com', 'chat.openai.com', 'claude.ai', 'grok.com']
 
 const STORAGE_KEY = 'skm'
 

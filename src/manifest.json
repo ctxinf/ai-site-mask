@@ -31,6 +31,15 @@
         "https://claude.ai/*"
       ],
       "run_at": "document_start"
+    },
+    {
+      "js": [
+        "sites/grok/index.ts"
+      ],
+      "matches": [
+        "https://grok.com/*"
+      ],
+      "run_at": "document_start"
     }
   ],
   "description": "浏览器插件：把 chatgpt.com / claude.ai 等网页版 AI 的界面换成 deepseek / doubao / qwen 风格（mask 换肤，不破坏原有功能）",
@@ -81,7 +90,8 @@
       ],
       "matches": [
         "https://chatgpt.com/*",
-        "https://chat.openai.com/*"
+        "https://chat.openai.com/*",
+        "https://grok.com/*"
       ]
     }
   ]

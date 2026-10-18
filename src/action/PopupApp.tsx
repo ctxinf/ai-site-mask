@@ -160,7 +160,7 @@ export default function PopupApp() {
             </button>
           </div>
 
-          {mode === 'mask' && (host.includes('chatgpt') || host.includes('openai')) && (
+          {mode === 'mask' && (host.includes('chatgpt') || host.includes('openai') || host === 'grok.com') && (
             <div className="theme-section">
               <span className="theme-title">皮肤风格：</span>
               <div className="theme-switch" role="group" aria-label="皮肤风格">
@@ -197,7 +197,7 @@ export default function PopupApp() {
               {theme === 'qwen' && (
                 <>
                 <label className="extra-opacity">
-                  <span>左上角模型名称</span>
+                  <span>{host === 'grok.com' ? '皮肤模型名称（实际模型不变）' : '左上角模型名称'}</span>
                   <input type="text" aria-label="左上角模型名称" maxLength={80}
                     value={qwenModelLabel}
                     placeholder={DEFAULT_QWEN_MODEL_LABEL}

@@ -1,7 +1,6 @@
 const qwenLogoUrl = chrome.runtime.getURL('images/qwen-logo.svg')
 const qwenLogoDarkUrl = chrome.runtime.getURL('images/qwen-logo-dark.svg')
-/** Qwen-inspired light skin. Keep the site's controls, model names and message DOM intact. */
-export const qwenThemeCss = `
+export const qwenPaletteCss = `
 html.skm-mask-on {
   --skm-qwen-logo: url("${qwenLogoUrl}");
   --skm-qwen-scheme: light;
@@ -40,6 +39,10 @@ html.skm-mask-on[data-theme="dark"], html.skm-mask-on.dark {
   --skm-qwen-selection: #49416b;
   --skm-qwen-scrollbar: #464646;
 }
+`
+/** Qwen-inspired light skin. Keep the site's controls, model names and message DOM intact. */
+export const qwenThemeCss = `
+${qwenPaletteCss}
 html.skm-mask-on {
   color-scheme: var(--skm-qwen-scheme) !important;
   color: var(--skm-qwen-text) !important;

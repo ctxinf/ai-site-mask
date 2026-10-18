@@ -75,7 +75,7 @@ try {
     const active = data.tabs.find(tab => tab.active)
     if (!active) throw new Error('没有绑定的截图标签页')
     run(['tab', active.targetId], true) // Activate before capture, including headed mode.
-    run(['eval', 'document.fonts.ready.then(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(() => resolve(true)))))'], true)
+    run(['eval', 'Promise.race([document.fonts.ready, new Promise(resolve => setTimeout(resolve, 3000))]).then(() => new Promise(resolve => { setTimeout(() => resolve(true), 1000); requestAnimationFrame(() => requestAnimationFrame(() => resolve(true))) }))'], true)
   }
   // agent-browser 0.39 may return a generated path even with a positional path.
   if (args[0] === 'screenshot' && args[1] && !args[1].startsWith('-')) {

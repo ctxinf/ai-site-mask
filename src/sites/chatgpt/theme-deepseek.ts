@@ -1,7 +1,6 @@
 const deepseekLogoUrl = chrome.runtime.getURL('images/deepseek-logo.svg')
 const deepseekIconUrl = chrome.runtime.getURL('images/deepseek-icon.svg')
-/** DeepSeek light skin; native controls stay in place and extras reveal on interaction. */
-export const deepseekThemeCss = `
+export const deepseekPaletteCss = `
 /* ============ 1. DeepSeek 品牌色板（皮肤变量，换主题只改这里） ============ */
 html.skm-mask-on {
   --skm-deepseek: 1;
@@ -35,6 +34,10 @@ html.skm-mask-on.dark, html.skm-mask-on[data-theme="dark"] {
   --skm-blue: #4d7bfe;
 }
 
+`
+/** DeepSeek light skin; native controls stay in place and extras reveal on interaction. */
+export const deepseekThemeCss = `
+${deepseekPaletteCss}
 /* ============ 2. 接管 ChatGPT design token ============
  * 变量表来源：catppuccin/userstyles styles/chatgpt（MIT，2026.08.16 版）。
  * ChatGPT 在 html.light / html.dark 下定义这些变量，与我们的
