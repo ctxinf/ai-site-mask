@@ -10,13 +10,12 @@ export function Toggle({checked, disabled, onChange, children}: {checked:boolean
   return <label className="toggle-row"><span>{children}</span><input type="checkbox" role="switch" checked={checked} disabled={disabled} onChange={onChange}/><span className="toggle-track" aria-hidden="true"/></label>
 }
 export const SKINS = {
-  qwen: {name:'通义千问', image:'../images/qwen-favicon.png', glyph:'Q', color:'#7746f5'},
-  deepseek: {name:'DeepSeek', image:'../images/deepseek-icon.svg', glyph:'D', color:'#447cf5'},
-  doubao: {name:'豆包', image:null, glyph:'豆', color:'#2d9d83'},
+  qwen: {name:'通义千问', image:'../images/qwen-favicon.png'},
+  deepseek: {name:'DeepSeek', image:'../images/deepseek-icon.svg'},
 } as const
 export type Skin = keyof typeof SKINS
 export function SkinIcon({skin}: {skin:Skin}) {
   const s = SKINS[skin]
-  return s.image ? <img className="skin-icon" src={s.image} alt=""/> : <span className="skin-icon glyph" style={{color:s.color}}>{s.glyph}</span>
+  return <img className="skin-icon" src={s.image} alt=""/>
 }
 export function skinsForHost(host:string): Skin[] { return ['qwen','deepseek'] }

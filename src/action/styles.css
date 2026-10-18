@@ -220,9 +220,6 @@ button {
 .skin-card.deepseek {
   --skin-accent:#4b7df6;
 }
-.skin-card.doubao {
-  --skin-accent:#379e85;
-}
 .skin-card:not(:disabled):hover {
   border-color:#ad91ef;
   box-shadow:0 3px 12px #542b9b0d;
@@ -720,16 +717,6 @@ button {
 }
 .save-status.failed>span {
   background:#d55c5c;
-}
-.empty-card {
-  text-align:center;
-  padding:45px 20px;
-}
-.empty-card .skin-icon {
-  width:40px;
-  height:40px;
-  margin:0 auto 20px;
-  font-size:29px;
 }
 .site-settings .toggle-row {
   border-bottom:1px solid var(--border);
