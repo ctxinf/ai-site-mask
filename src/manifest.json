@@ -9,7 +9,7 @@
       "128": "images/icon-128.png"
     },
     "default_popup": "action/index.html",
-    "default_title": "ai-site-skin-mask"
+    "default_title": "AI Site Skin Mask"
   },
   "chromium:manifest_version": 3,
   "content_scripts": [
@@ -52,7 +52,7 @@
       "128": "images/icon-128.png"
     },
     "default_popup": "action/index.html",
-    "default_title": "ai-site-skin-mask"
+    "default_title": "AI Site Skin Mask"
   },
   "firefox:browser_specific_settings": {
     "gecko": {
@@ -72,7 +72,7 @@
     "64": "images/icon-64.png",
     "128": "images/icon-128.png"
   },
-  "name": "ai-site-skin-mask",
+  "name": "AI Site Skin Mask",
   "version": "0.1.0",
   "permissions": [
     "storage",
@@ -94,5 +94,9 @@
         "https://grok.com/*"
       ]
     }
-  ]
+  ],
+  "options_ui": {
+    "page": "options/index.html",
+    "open_in_tab": true
+  }
 }

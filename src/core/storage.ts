@@ -1,5 +1,5 @@
 // chrome.storage.sync 封装：各站点的 mask 开关状态。
-// schema: { sites: { [host]: { mode, autoApply, theme? } }, globalAutoApplyDefault }
+// Site switches remain independent; shared preferences override legacy per-site display fields.
 
 export type MaskMode = 'original' | 'mask'
 
@@ -16,7 +16,7 @@ export function normalizeQwenModelLabel(value?: string): string {
 export interface SiteState {
   mode: MaskMode
   autoApply: boolean
-  /** 主题粒度预留，当前 UI 只做「原版 / Mask」二切 */
+  /** 当前站点选择的伪装皮肤。 */
   theme?: string
   /** Resting opacity of controls absent from the reference UI (0–0.5). */
   extraOpacity?: number
@@ -24,7 +24,14 @@ export interface SiteState {
   qwenModelLabel?: string
 }
 
+export interface Preferences {
+  extraOpacity?: number
+  qwenModelLabel?: string
+  deepseekUsername?: string
+}
+
 export interface MaskStorageSchema {
+  preferences?: Preferences
   sites: Record<string, SiteState>
   globalAutoApplyDefault: boolean
 }
@@ -41,16 +48,16 @@ const DEFAULT_SCHEMA: MaskStorageSchema = {
 
 function normalizeSiteState(
   raw: Partial<SiteState> | undefined,
-  globalAutoApplyDefault: boolean
+  globalAutoApplyDefault: boolean,
+  preferences: Preferences = {}
 ): SiteState {
   const state: SiteState = {
-    deepseekUsername: normalizeDeepseekUsername(raw?.deepseekUsername),
-    qwenModelLabel: normalizeQwenModelLabel(raw?.qwenModelLabel),
+    deepseekUsername: normalizeDeepseekUsername(preferences.deepseekUsername ?? raw?.deepseekUsername),
+    qwenModelLabel: normalizeQwenModelLabel(preferences.qwenModelLabel ?? raw?.qwenModelLabel),
     mode: raw?.mode === 'mask' ? 'mask' : 'original',
     autoApply:
       typeof raw?.autoApply === 'boolean' ? raw.autoApply : globalAutoApplyDefault,
-    extraOpacity: typeof raw?.extraOpacity === 'number' && Number.isFinite(raw.extraOpacity)
-      ? Math.max(0, Math.min(0.5, raw.extraOpacity)) : 0.25,
+    extraOpacity: normalizeOpacity(preferences.extraOpacity ?? raw?.extraOpacity),
   }
   if (typeof raw?.theme === 'string' && raw.theme) {
     state.theme = raw.theme
@@ -63,13 +70,14 @@ async function readSchema(): Promise<MaskStorageSchema> {
   const raw = result[STORAGE_KEY] as Partial<MaskStorageSchema> | undefined
   return {
     sites: raw?.sites ?? {},
+    preferences: raw?.preferences ?? {},
     globalAutoApplyDefault: raw?.globalAutoApplyDefault ?? false,
   }
 }
 
 export async function getSiteState(host: string): Promise<SiteState> {
   const schema = await readSchema()
-  return normalizeSiteState(schema.sites[host], schema.globalAutoApplyDefault)
+  return normalizeSiteState(schema.sites[host], schema.globalAutoApplyDefault, schema.preferences)
 }
 
 export async function setSiteState(
@@ -78,7 +86,7 @@ export async function setSiteState(
 ): Promise<SiteState> {
   const schema = await readSchema()
   const merged = {
-    ...normalizeSiteState(schema.sites[host], schema.globalAutoApplyDefault),
+    ...normalizeSiteState(schema.sites[host], schema.globalAutoApplyDefault, schema.preferences),
     ...patch,
   }
   const stored: SiteState = {
@@ -94,7 +102,7 @@ export async function setSiteState(
   await chrome.storage.sync.set({
     [STORAGE_KEY]: {...schema, sites: {...schema.sites, [host]: stored}},
   })
-  return stored
+  return normalizeSiteState(stored, schema.globalAutoApplyDefault, schema.preferences)
 }
 
 /** 订阅某 host 的状态变化；返回取消订阅函数。 */
@@ -118,9 +126,10 @@ export function onSiteStateChange(
     const globalDefault = newRaw?.globalAutoApplyDefault ?? false
     const before = normalizeSiteState(
       oldRaw?.sites?.[host],
-      oldRaw?.globalAutoApplyDefault ?? globalDefault
+      oldRaw?.globalAutoApplyDefault ?? globalDefault,
+      oldRaw?.preferences
     )
-    const after = normalizeSiteState(newRaw?.sites?.[host], globalDefault)
+    const after = normalizeSiteState(newRaw?.sites?.[host], globalDefault, newRaw?.preferences)
     if (
       before.mode !== after.mode ||
       before.autoApply !== after.autoApply ||
@@ -133,4 +142,30 @@ export function onSiteStateChange(
   }
   chrome.storage.onChanged.addListener(listener)
   return () => chrome.storage.onChanged.removeListener(listener)
+}
+
+function normalizeOpacity(value?: number): number {
+  return typeof value === 'number' && Number.isFinite(value)
+    ? Math.max(0, Math.min(0.5, value)) : 0.25
+}
+
+/** Shared preferences override legacy per-site fields only after explicitly saved. */
+export async function getPreferences(): Promise<Required<Preferences>> {
+  const {preferences = {}, sites} = await readSchema()
+  // Show existing values in the new editor without rewriting users' legacy settings.
+  const legacy = SUPPORTED_HOSTS.map(host => sites[host]).filter(Boolean)
+  return {
+    extraOpacity: normalizeOpacity(preferences.extraOpacity ?? legacy.find(s => s.extraOpacity !== undefined)?.extraOpacity),
+    qwenModelLabel: normalizeQwenModelLabel(preferences.qwenModelLabel ?? legacy.find(s => s.qwenModelLabel !== undefined)?.qwenModelLabel),
+    deepseekUsername: normalizeDeepseekUsername(preferences.deepseekUsername ?? legacy.find(s => s.deepseekUsername !== undefined)?.deepseekUsername),
+  }
+}
+
+export async function setPreferences(patch: Preferences): Promise<void> {
+  const schema = await readSchema()
+  const preferences = {...schema.preferences}
+  if (patch.extraOpacity !== undefined) preferences.extraOpacity = normalizeOpacity(patch.extraOpacity)
+  if (patch.qwenModelLabel !== undefined) preferences.qwenModelLabel = normalizeQwenModelLabel(patch.qwenModelLabel)
+  if (patch.deepseekUsername !== undefined) preferences.deepseekUsername = normalizeDeepseekUsername(patch.deepseekUsername)
+  await chrome.storage.sync.set({[STORAGE_KEY]: {...schema, preferences}})
 }

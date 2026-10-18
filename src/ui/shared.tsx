@@ -1,0 +1,22 @@
+import type {ReactNode} from 'react'
+
+export function Brand() {
+  return <div className="brand"><img src="../images/icon-48.png" alt=""/><span>AI Site Skin Mask</span></div>
+}
+export function Gear() {
+  return <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><path d="m9 3-.6 2.2-2 .9-2.1-.6-2 3.5 1.6 1.6v2.8L2.3 15l2 3.5 2.1-.6 2 .9L9 21h4l.6-2.2 2-.9 2.1.6 2-3.5-1.6-1.6v-2.8l1.6-1.6-2-3.5-2.1.6-2-.9L13 3Z"/><circle cx="11" cy="12" r="3"/></svg>
+}
+export function Toggle({checked, disabled, onChange, children}: {checked:boolean; disabled?:boolean; onChange:()=>void; children:ReactNode}) {
+  return <label className="toggle-row"><span>{children}</span><input type="checkbox" role="switch" checked={checked} disabled={disabled} onChange={onChange}/><span className="toggle-track" aria-hidden="true"/></label>
+}
+export const SKINS = {
+  qwen: {name:'通义千问', image:'../images/qwen-favicon.png', glyph:'Q', color:'#7746f5'},
+  deepseek: {name:'DeepSeek', image:'../images/deepseek-icon.svg', glyph:'D', color:'#447cf5'},
+  doubao: {name:'豆包', image:null, glyph:'豆', color:'#2d9d83'},
+} as const
+export type Skin = keyof typeof SKINS
+export function SkinIcon({skin}: {skin:Skin}) {
+  const s = SKINS[skin]
+  return s.image ? <img className="skin-icon" src={s.image} alt=""/> : <span className="skin-icon glyph" style={{color:s.color}}>{s.glyph}</span>
+}
+export function skinsForHost(host:string): Skin[] { return host === 'claude.ai' ? ['doubao'] : ['qwen','deepseek'] }
