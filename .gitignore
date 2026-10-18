@@ -37,3 +37,4 @@ extension-env.d.ts
 .workflow/
 *.md
 /docs/
+*.prompt.txt
