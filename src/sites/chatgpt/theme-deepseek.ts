@@ -485,4 +485,9 @@ html.skm-mask-on ::-webkit-scrollbar-thumb {
 html.skm-mask-on ::-webkit-scrollbar-track {
   background-color: transparent !important;
 }
+
+/* Native accuracy notice can appear above the composer after SPA navigation. */
+html.skm-mask-on main [data-markdown-copy="exclude"].text-center.text-pretty.text-codex-description {
+  display: none !important;
+}
 `.trim()

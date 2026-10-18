@@ -379,4 +379,28 @@ html.skm-mask-on [data-app-shell-titlebar] button:is([aria-label="分享"], [ari
 }
 html.skm-mask-on ::selection { background: var(--skm-qwen-selection); }
 html.skm-mask-on * { scrollbar-color: var(--skm-qwen-scrollbar) transparent; }
+
+/* Native accuracy notice can appear above the composer after SPA navigation. */
+html.skm-mask-on main [data-markdown-copy="exclude"].text-center.text-pretty.text-codex-description {
+  display: none !important;
+}
+
+/* Keep the native expand action, replacing only its decorative icon. */
+html.skm-mask-on [data-app-navigation-rail] [data-app-shell-sidebar-trigger] {
+  position: relative;
+}
+html.skm-mask-on [data-app-navigation-rail] [data-app-shell-sidebar-trigger] > span {
+  opacity: 0 !important;
+}
+html.skm-mask-on [data-app-navigation-rail] [data-app-shell-sidebar-trigger]::after {
+  content: "";
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--skm-qwen-logo) left center / 75px 20px no-repeat;
+  pointer-events: none;
+}
 `.trim()

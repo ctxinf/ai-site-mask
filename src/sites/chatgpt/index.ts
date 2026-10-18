@@ -20,6 +20,7 @@ const DEEPSEEK_FAVICON = chrome.runtime.getURL('images/deepseek-favicon.svg')
 const QWEN_FAVICON = chrome.runtime.getURL('images/qwen-favicon.png')
 
 const engine = new MaskEngine('chatgpt', resolveChatGptTheme, {
+  isApplicable: () => location.pathname === '/' || location.pathname.startsWith('/c/'),
   forceLight: () => false,
   getTitle: (theme) => (theme === 'deepseek' ? 'DeepSeek' : 'Qwen'),
   getFavicon: (theme) => (theme === 'deepseek' ? DEEPSEEK_FAVICON : QWEN_FAVICON),

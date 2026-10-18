@@ -3,6 +3,7 @@ import {getSiteState, onSiteStateChange, normalizeQwenModelLabel} from './storag
 export type CssProvider = string | ((theme?: string) => string)
 
 export interface MaskEngineOptions {
+  isApplicable?: () => boolean
   forceLight?: (theme?: string) => boolean
   getTitle?: (theme?: string) => string | undefined
   getFavicon?: (theme?: string) => string | undefined
@@ -23,6 +24,8 @@ export class MaskEngine {
   private wasDark = false
   private classObserver: MutationObserver | null = null
   private forceLight = true
+  private routeTimer: ReturnType<typeof setInterval> | null = null
+  private requestedStyle: [string | undefined, number, string | undefined] | null = null
 
   constructor(
     private readonly siteId: string,
@@ -44,6 +47,11 @@ export class MaskEngine {
 
   /** 注入（或复用）style 标签并挂上开关 class；幂等。 */
   apply(theme?: string, extraOpacity = 0.25, qwenModelLabel?: string): void {
+    this.requestedStyle = [theme, extraOpacity, qwenModelLabel]
+    if (this.options?.isApplicable && !this.options.isApplicable()) {
+      this.remove()
+      return
+    }
     this.forceLight = this.options?.forceLight?.(theme) ?? true
     const opacity = Number.isFinite(extraOpacity) ? Math.max(0, Math.min(0.5, extraOpacity)) : 0.25
     const cssText = `${this.resolveCss(theme)}\nhtml.skm-mask-on { --skm-extra-opacity: ${opacity}; --skm-qwen-model-label: ${JSON.stringify(normalizeQwenModelLabel(qwenModelLabel))}; }`
@@ -216,10 +224,22 @@ export class MaskEngine {
       this.apply(state.theme, state.extraOpacity, state.qwenModelLabel)
     }
 
+    // Content scripts run in an isolated world: polling the URL also catches
+    // native pushState/replaceState navigation without patching the page.
+    if (this.options?.isApplicable) {
+      let previousPath = location.pathname
+      this.routeTimer = setInterval(() => {
+        if (location.pathname === previousPath) return
+        previousPath = location.pathname
+        if (this.requestedStyle) this.apply(...this.requestedStyle)
+      }, 100)
+    }
+
     this.unsubscribe = onSiteStateChange(host, (next) => {
       if (next.mode === 'mask') {
         this.apply(next.theme, next.extraOpacity, next.qwenModelLabel)
       } else {
+        this.requestedStyle = null
         this.remove()
       }
     })
@@ -227,6 +247,9 @@ export class MaskEngine {
 
   /** HMR/卸载时清理：取消订阅并移除 mask。 */
   destroy(): void {
+    if (this.routeTimer !== null) clearInterval(this.routeTimer)
+    this.routeTimer = null
+    this.requestedStyle = null
     this.unsubscribe?.()
     this.unsubscribe = null
     this.booted = false
