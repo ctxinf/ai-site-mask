@@ -101,6 +101,7 @@
         "https://chatgpt.com/*",
         "https://chat.openai.com/*",
         "https://grok.com/*",
+        "https://claude.ai/*",
         "https://gemini.google.com/*"
       ]
     }

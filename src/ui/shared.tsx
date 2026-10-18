@@ -19,4 +19,4 @@ export function SkinIcon({skin}: {skin:Skin}) {
   const s = SKINS[skin]
   return s.image ? <img className="skin-icon" src={s.image} alt=""/> : <span className="skin-icon glyph" style={{color:s.color}}>{s.glyph}</span>
 }
-export function skinsForHost(host:string): Skin[] { return host === 'claude.ai' ? ['doubao'] : ['qwen','deepseek'] }
+export function skinsForHost(host:string): Skin[] { return ['qwen','deepseek'] }
