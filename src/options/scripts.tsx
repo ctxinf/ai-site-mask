@@ -6,7 +6,13 @@ import {getPreferences, setPreferences, getSiteState, setSiteState, DEFAULT_QWEN
 import '../action/styles.css'
 
 type Page = 'general' | typeof SITES[number]['host'] | Skin
-const sites = SITES.map(site => ({...site, id: site.host}))
+const siteIcons = {
+  chatgpt: new URL('../images/openai.svg', import.meta.url).href,
+  claude: new URL('../images/claude-color.svg', import.meta.url).href,
+  grok: new URL('../images/grok.svg', import.meta.url).href,
+  gemini: new URL('../images/gemini-color.svg', import.meta.url).href,
+}
+const sites = SITES.map(site => ({...site, image: siteIcons[site.id], id: site.host}))
 
 function OptionsApp() {
   const [page, setPage] = useState<Page>('general')
@@ -54,7 +60,7 @@ function OptionsApp() {
     <header className="options-header"><Brand/><span className="header-divider">/</span><span>偏好设置</span></header>
     <div className="options-layout"><aside className="options-sidebar"><nav aria-label="偏好设置导航">
       <button className={`nav-general ${page === 'general' ? 'current' : ''}`} aria-current={page === 'general' ? 'page' : undefined} disabled={saving} onClick={() => navigate('general')}><Gear/>通用设置</button>
-      <details open><summary><span className="folder-icon"/>原始站点</summary><ul>{sites.map(s => <li key={s.id}><button disabled={saving} className={page === s.id ? 'current' : ''} aria-current={page === s.id ? 'page' : undefined} onClick={() => navigate(s.id)}><span className={`nav-site-icon ${s.name.toLowerCase()}`}>{s.glyph}</span>{s.name}</button></li>)}</ul></details>
+      <details open><summary><span className="folder-icon"/>原始站点</summary><ul>{sites.map(s => <li key={s.id}><button disabled={saving} className={page === s.id ? 'current' : ''} aria-current={page === s.id ? 'page' : undefined} onClick={() => navigate(s.id)}><img className="nav-site-icon" src={s.image} alt=""/>{s.name}</button></li>)}</ul></details>
       <details open><summary><span className="folder-icon"/>伪装站点</summary><ul>{(Object.keys(SKINS) as Skin[]).map(s => <li key={s}><button disabled={saving} className={page === s ? 'current' : ''} aria-current={page === s ? 'page' : undefined} onClick={() => navigate(s)}><SkinIcon skin={s}/>{SKINS[s].name}</button></li>)}</ul></details>
     </nav><div className="sidebar-note"><span>只换外观，功能如常。</span><small>AI Site Skin Mask · v0.1.0</small></div></aside>
     <main className="options-main"><div className="breadcrumb">{parent}<span>/</span>{title}</div><h1 className="options-title">{isSkin && <SkinIcon skin={page as Skin}/>} {page === 'general' && <Gear/>}{title}</h1><p className="options-description">{page === 'general' ? '统一调整伪装界面的显示细节。' : isSkin ? '为喜欢的伪装，留一点自己的习惯。' : '管理这个网站的伪装偏好。'}</p>

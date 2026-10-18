@@ -520,23 +520,8 @@ button {
 .nav-site-icon {
   width:23px;
   height:23px;
-  display:grid;
-  place-items:center;
-  border-radius:6px;
-  font-size:19px;
-}
-.nav-site-icon.grok {
-  color:white;
-  background:#18181d;
-  font-size:18px;
-}
-.nav-site-icon.claude {
-  color:#ca775c;
-  font-size:26px;
-}
-.nav-site-icon.chatgpt {
-  font-size:18px;
-  color:#313039;
+  object-fit:contain;
+  flex-shrink:0;
 }
 .sidebar-note {
   margin-top:auto;
