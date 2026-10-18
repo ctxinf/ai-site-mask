@@ -1,5 +1,5 @@
-import {qwenPaletteCss} from '../chatgpt/theme-qwen'
-import {deepseekPaletteCss} from '../chatgpt/theme-deepseek'
+import {qwenPaletteCss} from '../../themes/qwen'
+import {deepseekPaletteCss} from '../../themes/deepseek'
 
 /** Grok adapter: share palettes, target native Grok landmarks and controls. */
 export function grokThemeCss(theme?: string): string {

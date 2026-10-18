@@ -1,5 +1,5 @@
-import {qwenPaletteCss} from '../chatgpt/theme-qwen'
-import {deepseekPaletteCss} from '../chatgpt/theme-deepseek'
+import {qwenPaletteCss} from '../../themes/qwen'
+import {deepseekPaletteCss} from '../../themes/deepseek'
 
 /** Presentation only: retain Claude's editor, model selector and native actions. */
 export function claudeThemeCss(theme?: string): string {

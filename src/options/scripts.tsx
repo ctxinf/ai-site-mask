@@ -1,11 +1,12 @@
+import {SITES} from '../core/catalog'
 import {createRoot} from 'react-dom/client'
 import {useEffect, useRef, useState} from 'react'
 import {Brand, Gear, Toggle, SKINS, SkinIcon, skinsForHost, type Skin} from '../ui/shared'
 import {getPreferences, setPreferences, getSiteState, setSiteState, DEFAULT_QWEN_MODEL_LABEL, DEFAULT_DEEPSEEK_USERNAME, type Preferences, type SiteState} from '../core/storage'
 import '../action/styles.css'
 
-type Page = 'general' | 'chatgpt.com' | 'claude.ai' | 'grok.com' | Skin
-const sites = [{id:'chatgpt.com',name:'ChatGPT',glyph:'G'}, {id:'claude.ai',name:'Claude',glyph:'✳'}, {id:'grok.com',name:'Grok',glyph:'𝕏'}] as const
+type Page = 'general' | typeof SITES[number]['host'] | Skin
+const sites = SITES.map(site => ({...site, id: site.host}))
 
 function OptionsApp() {
   const [page, setPage] = useState<Page>('general')

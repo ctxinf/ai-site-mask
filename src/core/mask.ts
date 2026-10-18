@@ -1,4 +1,6 @@
-import {getSiteState, onSiteStateChange, normalizeQwenModelLabel} from './storage'
+import {getSiteState, onSiteStateChange} from './storage'
+import {normalizeOpacity, normalizeQwenModelLabel} from './preferences'
+import {TabIdentity} from './tab-identity'
 
 export type CssProvider = string | ((theme?: string) => string)
 
@@ -13,16 +15,15 @@ export interface MaskEngineOptions {
 // cssText 必须由调用方保证所有规则都以 `html.skm-mask-on` 为前缀，
 // 这里不做校验、不做改写，只做注入。
 export class MaskEngine {
+  private readonly identity = new TabIdentity()
   private readonly styleId: string
   private unsubscribe: (() => void) | null = null
   private booted = false
+  private generation = 0
+  private documentObserver: MutationObserver | null = null
+  private cancelDocumentReady: (() => void) | null = null
   private enabled = false
   private messageListener: Parameters<typeof chrome.runtime.onMessage.addListener>[0] | null = null
-  private originalTitle: string | null = null
-  private titleObserver: MutationObserver | null = null
-  private faviconObserver: MutationObserver | null = null
-  private faviconOriginals = new Map<HTMLLinkElement, {href: string | null; type: string | null; sizes: string | null}>()
-  private createdFavicon: HTMLLinkElement | null = null
   private wasDark = false
   private classObserver: MutationObserver | null = null
   private forceLight = true
@@ -55,7 +56,7 @@ export class MaskEngine {
       return
     }
     this.forceLight = this.options?.forceLight?.(theme) ?? true
-    const opacity = Number.isFinite(extraOpacity) ? Math.max(0, Math.min(0.5, extraOpacity)) : 0.25
+    const opacity = normalizeOpacity(extraOpacity)
     const cssText = `${this.resolveCss(theme)}\nhtml.skm-mask-on { --skm-extra-opacity: ${opacity}; --skm-qwen-model-label: ${JSON.stringify(normalizeQwenModelLabel(qwenModelLabel))}; }`
     let el = this.styleEl
     if (!el) {
@@ -95,96 +96,17 @@ export class MaskEngine {
       })
     }
 
-    // 标题伪装
-    const disguisedTitle = this.options?.getTitle?.(theme)
-    // A theme switch must replace the observer's captured title as well.
-    this.titleObserver?.disconnect()
-    this.titleObserver = null
-    if (disguisedTitle) {
-      if (this.originalTitle === null) {
-        this.originalTitle = document.title
-      }
-      document.title = disguisedTitle
-      // Observe the container: document_start may precede <title>, and Gemini
-      // can replace the title node entirely during SPA navigation.
-      this.titleObserver = new MutationObserver(() => {
-        if (
-          document.documentElement?.classList.contains('skm-mask-on') &&
-          document.title !== disguisedTitle
-        ) {
-          if (!this.originalTitle && document.title) this.originalTitle = document.title
-          document.title = disguisedTitle
-        }
-      })
-      this.titleObserver.observe(document.head ?? document.documentElement, {
-        childList: true,
-        characterData: true,
-        subtree: true,
-      })
-    }
-
-    // Replace every tab icon candidate; the site can add or rewrite them on navigation.
-    this.restoreFavicons()
-    const disguisedFavicon = this.options?.getFavicon?.(theme)
-    if (disguisedFavicon) {
-      const updateIcons = () => {
-        const icons = Array.from(document.querySelectorAll<HTMLLinkElement>('link[rel~="icon"]'))
-        if (!icons.length && document.head) {
-          const icon = document.createElement('link')
-          icon.rel = 'icon'
-          this.createdFavicon = icon
-          document.head.appendChild(icon)
-          icons.push(icon)
-        }
-        for (const icon of icons) {
-          if (!this.faviconOriginals.has(icon) && icon !== this.createdFavicon) {
-            this.faviconOriginals.set(icon, {
-              href: icon.getAttribute('href'), type: icon.getAttribute('type'), sizes: icon.getAttribute('sizes'),
-            })
-          }
-          if (icon.href !== disguisedFavicon) icon.href = disguisedFavicon
-          // A stale SVG MIME type or size hint can prevent PNG selection.
-          if (icon.hasAttribute('type')) icon.removeAttribute('type')
-          if (icon.hasAttribute('sizes')) icon.removeAttribute('sizes')
-        }
-      }
-      updateIcons()
-      this.faviconObserver = new MutationObserver(updateIcons)
-      this.faviconObserver.observe(document.head ?? document.documentElement, {
-        childList: true, subtree: true, attributes: true, attributeFilter: ['href', 'rel', 'type', 'sizes'],
-      })
-    }
-  }
-
-  private restoreFavicons(): void {
-    this.faviconObserver?.disconnect()
-    this.faviconObserver = null
-    this.createdFavicon?.remove()
-    this.createdFavicon = null
-    for (const [icon, attributes] of this.faviconOriginals) {
-      for (const [name, value] of Object.entries(attributes)) {
-        if (value === null) icon.removeAttribute(name)
-        else icon.setAttribute(name, value)
-      }
-    }
-    this.faviconOriginals.clear()
+    this.identity.apply(this.options?.getTitle?.(theme), this.options?.getFavicon?.(theme))
   }
 
   /** 移除开关 class 和 style 标签；恢复标题和 Favicon；还原深色模式；幂等。 */
   remove(): void {
     document.documentElement?.classList.remove('skm-mask-on')
     this.styleEl?.remove()
-    this.titleObserver?.disconnect()
-    this.titleObserver = null
     this.classObserver?.disconnect()
     this.classObserver = null
 
-    if (this.originalTitle !== null) {
-      document.title = this.originalTitle
-      this.originalTitle = null
-    }
-
-    this.restoreFavicons()
+    this.identity.restore()
 
     if (this.wasDark) {
       document.documentElement?.classList.add('dark')
@@ -203,8 +125,10 @@ export class MaskEngine {
       return
     }
     this.booted = true
+    const generation = ++this.generation
 
     const docElReady = new Promise<void>((resolve) => {
+      this.cancelDocumentReady = resolve
       if (document.documentElement) {
         resolve()
         return
@@ -212,13 +136,17 @@ export class MaskEngine {
       const obs = new MutationObserver(() => {
         if (document.documentElement) {
           obs.disconnect()
+          this.documentObserver = null
           resolve()
         }
       })
+      this.documentObserver = obs
       obs.observe(document, {childList: true})
     })
 
     const [state] = await Promise.all([getSiteState(host), docElReady])
+    if (generation !== this.generation) return
+    this.cancelDocumentReady = null
     this.enabled = state.autoApply
     if (this.enabled) {
       this.apply(state.theme, state.extraOpacity, state.qwenModelLabel)
@@ -240,6 +168,7 @@ export class MaskEngine {
         respond({enabled: this.enabled})
       } else if (message?.type === 'skm:set-page-state' && typeof message.enabled === 'boolean') {
         getSiteState(host).then(next => {
+          if (generation !== this.generation) { respond({error: '页面已卸载'}); return }
           this.enabled = message.enabled
           if (this.enabled) this.apply(next.theme, next.extraOpacity, next.qwenModelLabel)
           else {
@@ -259,6 +188,11 @@ export class MaskEngine {
 
   /** HMR/卸载时清理：取消订阅并移除 mask。 */
   destroy(): void {
+    this.generation++
+    this.documentObserver?.disconnect()
+    this.documentObserver = null
+    this.cancelDocumentReady?.()
+    this.cancelDocumentReady = null
     if (this.routeTimer !== null) clearInterval(this.routeTimer)
     this.routeTimer = null
     this.requestedStyle = null

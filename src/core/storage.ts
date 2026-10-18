@@ -1,40 +1,17 @@
 // chrome.storage.sync 封装：各站点偏好；页面临时开关由 MaskEngine 管理。
 // Site switches remain independent; shared preferences override legacy per-site display fields.
 
-export const DEFAULT_DEEPSEEK_USERNAME = '133****3333'
-export function normalizeDeepseekUsername(value?: string): string {
-  return (typeof value === 'string' ? value : '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 40) || DEFAULT_DEEPSEEK_USERNAME
-}
-
-export const DEFAULT_QWEN_MODEL_LABEL = 'Qwen3.7-Plus'
-export function normalizeQwenModelLabel(value?: string): string {
-  return (typeof value === 'string' ? value : '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 80) || DEFAULT_QWEN_MODEL_LABEL
-}
-
-export interface SiteState {
-  autoApply: boolean
-  /** 当前站点选择的伪装皮肤。 */
-  theme?: string
-  /** Resting opacity of controls absent from the reference UI (0–0.5). */
-  extraOpacity?: number
-  deepseekUsername?: string
-  qwenModelLabel?: string
-}
-
-export interface Preferences {
-  extraOpacity?: number
-  qwenModelLabel?: string
-  deepseekUsername?: string
-}
+import {SUPPORTED_HOSTS} from './catalog'
+import {normalizeDeepseekUsername, normalizeQwenModelLabel, normalizeOpacity, type Preferences, type SiteState} from './preferences'
+export {SUPPORTED_HOSTS} from './catalog'
+export {DEFAULT_DEEPSEEK_USERNAME, DEFAULT_QWEN_MODEL_LABEL, normalizeDeepseekUsername, normalizeQwenModelLabel} from './preferences'
+export type {Preferences, SiteState} from './preferences'
 
 export interface MaskStorageSchema {
   preferences?: Preferences
   sites: Record<string, SiteState>
   globalAutoApplyDefault: boolean
 }
-
-/** 首批支持换肤的站点 host */
-export const SUPPORTED_HOSTS = ['chatgpt.com', 'chat.openai.com', 'claude.ai', 'grok.com', 'gemini.google.com']
 
 const STORAGE_KEY = 'skm'
 
@@ -89,8 +66,7 @@ export async function setSiteState(
     deepseekUsername: normalizeDeepseekUsername(merged.deepseekUsername),
     qwenModelLabel: normalizeQwenModelLabel(merged.qwenModelLabel),
     autoApply: merged.autoApply,
-    extraOpacity: typeof merged.extraOpacity === 'number' && Number.isFinite(merged.extraOpacity)
-      ? Math.max(0, Math.min(0.5, merged.extraOpacity)) : 0.25,
+    extraOpacity: normalizeOpacity(merged.extraOpacity),
   }
   if (merged.theme !== undefined) {
     stored.theme = merged.theme
@@ -137,11 +113,6 @@ export function onSiteStateChange(
   }
   chrome.storage.onChanged.addListener(listener)
   return () => chrome.storage.onChanged.removeListener(listener)
-}
-
-function normalizeOpacity(value?: number): number {
-  return typeof value === 'number' && Number.isFinite(value)
-    ? Math.max(0, Math.min(0.5, value)) : 0.25
 }
 
 /** Shared preferences override legacy per-site fields only after explicitly saved. */

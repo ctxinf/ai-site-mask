@@ -1,5 +1,5 @@
-import {qwenPaletteCss} from '../chatgpt/theme-qwen'
-import {deepseekPaletteCss} from '../chatgpt/theme-deepseek'
+import {qwenPaletteCss} from '../../themes/qwen'
+import {deepseekPaletteCss} from '../../themes/deepseek'
 import {geminiLayoutCss} from './layout'
 
 /** Keep Gemini's native editor, navigation and tools; only override presentation. */

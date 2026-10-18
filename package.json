@@ -34,7 +34,8 @@
     "shot:popup": "node scripts/shot.mjs --target popup",
     "browser": "node scripts/browser.mjs",
     "browser:popup": "node scripts/browser.mjs popup",
-    "browser:page": "node scripts/browser.mjs page"
+    "browser:page": "node scripts/browser.mjs page",
+    "test": "node --experimental-transform-types --import ./tests/register.mjs tests/core.test.mjs"
   },
   "type": "module",
   "version": "0.1.0"

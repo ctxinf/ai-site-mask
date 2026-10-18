@@ -1,3 +1,4 @@
+import {resolveSkin, siteForHost} from '../core/catalog'
 import {useEffect, useState} from 'react'
 import {SUPPORTED_HOSTS, getSiteState, setSiteState, onSiteStateChange, type SiteState} from '../core/storage'
 import {Brand, Gear, Toggle, SKINS, SkinIcon, skinsForHost} from '../ui/shared'
@@ -50,14 +51,14 @@ export default function PopupApp() {
     finally { setBusy(false) }
   }
   const skins = skinsForHost(host)
-  const activeSkin = skins.find(s => s === state?.theme) ?? skins[0]
+  const activeSkin = resolveSkin(state?.theme)
   const openOptions = () => { chrome.runtime.openOptionsPage().catch(err => setError(String(err))) }
   return <main className={`popup ${enabled ? 'is-enabled' : ''}`}>
     <header className="popup-header"><Brand/><button className="icon-button" aria-label="打开偏好设置" onClick={openOptions}><Gear/></button></header>
     {!ready && <p className="notice" role="status">正在读取设置…</p>}
     {ready && !state && !error && <div className="site-bar" role="status"><strong>非目标页面</strong></div>}
     {state && <>
-      <div className="site-bar"><span className="site-monogram">{host === 'grok.com' ? '𝕏' : host === 'claude.ai' ? 'C' : 'G'}</span><span>当前网站</span><strong>{host}</strong></div>
+      <div className="site-bar"><span className="site-monogram">{siteForHost(host)?.glyph}</span><span>当前网站</span><strong>{host}</strong></div>
       <Toggle checked={enabled} disabled={busy} onChange={togglePage}><strong>启用伪装</strong></Toggle>
       {enabled && <section className="skin-section"><h1>选择你的伪装:</h1><p className="skin-helper">换个外观，原生功能依旧。</p>
         <div className="skin-grid" role="group" aria-label="伪装皮肤">

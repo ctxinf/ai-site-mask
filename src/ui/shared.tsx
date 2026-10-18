@@ -1,3 +1,5 @@
+import {SKINS, type Skin} from '../core/catalog'
+export {SKINS, skinsForHost, type Skin} from '../core/catalog'
 import type {ReactNode} from 'react'
 
 export function Brand() {
@@ -9,13 +11,7 @@ export function Gear() {
 export function Toggle({checked, disabled, onChange, children}: {checked:boolean; disabled?:boolean; onChange:()=>void; children:ReactNode}) {
   return <label className="toggle-row"><span>{children}</span><input type="checkbox" role="switch" checked={checked} disabled={disabled} onChange={onChange}/><span className="toggle-track" aria-hidden="true"/></label>
 }
-export const SKINS = {
-  qwen: {name:'通义千问', image:'../images/qwen-favicon.png'},
-  deepseek: {name:'DeepSeek', image:'../images/deepseek-icon.svg'},
-} as const
-export type Skin = keyof typeof SKINS
 export function SkinIcon({skin}: {skin:Skin}) {
   const s = SKINS[skin]
-  return <img className="skin-icon" src={s.image} alt=""/>
+  return <img className="skin-icon" src={`../${s.image}`} alt=""/>
 }
-export function skinsForHost(host:string): Skin[] { return ['qwen','deepseek'] }
