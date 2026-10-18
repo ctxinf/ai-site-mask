@@ -1,15 +1,11 @@
-name: Build dist
+name: Release dist
 
 on:
   push:
-    branches: [main]
     tags: ['v*']
-  pull_request:
-    branches: [main]
-  workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -29,10 +25,10 @@ jobs:
         run: npm test
       - name: Build extension
         run: npm run build
-      - name: Upload dist
-        uses: actions/upload-artifact@v4
-        with:
-          name: ai-site-mask-dist-${{ github.sha }}
-          path: dist/chromium/
-          if-no-files-found: error
-          retention-days: 30
+      - name: Package extension
+        working-directory: dist/chromium
+        run: zip -r "../../ai-site-mask-${GITHUB_REF_NAME}.zip" .
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" "ai-site-mask-${GITHUB_REF_NAME}.zip" --verify-tag --title "$GITHUB_REF_NAME" --generate-notes
