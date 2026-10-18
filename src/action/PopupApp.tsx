@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react'
 import {
   SUPPORTED_HOSTS,
+  DEFAULT_QWEN_MODEL_LABEL,
   getSiteState,
   setSiteState,
   type MaskMode,
@@ -12,6 +13,7 @@ export default function PopupApp() {
   const [theme, setTheme] = useState<string>('qwen')
   const [autoApply, setAutoApply] = useState(false)
   const [extraOpacity, setExtraOpacity] = useState(25)
+  const [qwenModelLabel, setQwenModelLabel] = useState(DEFAULT_QWEN_MODEL_LABEL)
   const [ready, setReady] = useState(false)
   const [error, setError] = useState('')
 
@@ -47,6 +49,7 @@ export default function PopupApp() {
           if (cancelled) {
             return
           }
+          setQwenModelLabel(state.qwenModelLabel ?? DEFAULT_QWEN_MODEL_LABEL)
           setMode(state.mode)
           setTheme(state.theme || (h.includes('claude') ? 'doubao' : 'qwen'))
           setAutoApply(state.autoApply)
@@ -174,6 +177,22 @@ export default function PopupApp() {
                 </button>
               </div>
               {theme === 'qwen' && (
+                <>
+                <label className="extra-opacity">
+                  <span>左上角模型名称</span>
+                  <input type="text" aria-label="左上角模型名称" maxLength={80}
+                    value={qwenModelLabel}
+                    placeholder={DEFAULT_QWEN_MODEL_LABEL}
+                    onChange={(event) => setQwenModelLabel(event.currentTarget.value)}
+                    onBlur={async () => {
+                      try {
+                        const state = await setSiteState(host, {qwenModelLabel})
+                        setQwenModelLabel(state.qwenModelLabel ?? DEFAULT_QWEN_MODEL_LABEL)
+                        setError('')
+                      } catch (err) { setError(String(err)) }
+                    }}
+                  />
+                </label>
                 <label className="extra-opacity">
                   <span>额外入口显示程度：{extraOpacity}%</span>
                   <input type="range" min="0" max="50" step="5"
@@ -186,6 +205,7 @@ export default function PopupApp() {
                   />
                   <small>保留原位；鼠标悬停或键盘聚焦时完整显示。</small>
                 </label>
+                </>
               )}
             </div>
           )}

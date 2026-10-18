@@ -68,5 +68,18 @@
   "permissions": [
     "storage",
     "tabs"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "images/qwen-logo.svg",
+        "images/qwen-logo-dark.svg",
+        "images/qwen-favicon.png"
+      ],
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*"
+      ]
+    }
   ]
 }

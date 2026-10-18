@@ -15,12 +15,11 @@ function resolveChatGptTheme(theme?: string): string {
   return qwenThemeCss // 默认通义千问 (Qwen)
 }
 
-const QWEN_FAVICON =
-  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23615ced'/%3E%3Cpath d='M16 4L19.5 12.5L28 16L19.5 19.5L16 28L12.5 19.5L4 16L12.5 12.5L16 4Z' fill='white'/%3E%3C/svg%3E"
+const QWEN_FAVICON = chrome.runtime.getURL('images/qwen-favicon.png')
 
 const engine = new MaskEngine('chatgpt', resolveChatGptTheme, {
   forceLight: (theme) => theme === 'deepseek',
-  getTitle: (theme) => (theme === 'deepseek' ? 'DeepSeek' : '通义千问'),
+  getTitle: (theme) => (theme === 'deepseek' ? 'DeepSeek' : 'Qwen'),
   getFavicon: (theme) => (theme === 'deepseek' ? undefined : QWEN_FAVICON),
 })
 

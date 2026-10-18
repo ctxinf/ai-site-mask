@@ -126,3 +126,11 @@
 }
 .extra-opacity input { width: 100%; margin: 0; accent-color: #615ced; }
 .extra-opacity small { color: #73757c; line-height: 1.5; }
+
+.extra-opacity input[type="text"] {
+  box-sizing: border-box;
+  padding: 7px 9px;
+  border: 1px solid #d8d8df;
+  border-radius: 6px;
+  font: inherit;
+}

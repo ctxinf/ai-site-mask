@@ -3,6 +3,11 @@
 
 export type MaskMode = 'original' | 'mask'
 
+export const DEFAULT_QWEN_MODEL_LABEL = 'Qwen3.7-Plus'
+export function normalizeQwenModelLabel(value?: string): string {
+  return (typeof value === 'string' ? value : '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 80) || DEFAULT_QWEN_MODEL_LABEL
+}
+
 export interface SiteState {
   mode: MaskMode
   autoApply: boolean
@@ -10,6 +15,7 @@ export interface SiteState {
   theme?: string
   /** Resting opacity of controls absent from the reference UI (0–0.5). */
   extraOpacity?: number
+  qwenModelLabel?: string
 }
 
 export interface MaskStorageSchema {
@@ -32,6 +38,7 @@ function normalizeSiteState(
   globalAutoApplyDefault: boolean
 ): SiteState {
   const state: SiteState = {
+    qwenModelLabel: normalizeQwenModelLabel(raw?.qwenModelLabel),
     mode: raw?.mode === 'mask' ? 'mask' : 'original',
     autoApply:
       typeof raw?.autoApply === 'boolean' ? raw.autoApply : globalAutoApplyDefault,
@@ -68,6 +75,7 @@ export async function setSiteState(
     ...patch,
   }
   const stored: SiteState = {
+    qwenModelLabel: normalizeQwenModelLabel(merged.qwenModelLabel),
     mode: merged.mode, autoApply: merged.autoApply,
     extraOpacity: typeof merged.extraOpacity === 'number' && Number.isFinite(merged.extraOpacity)
       ? Math.max(0, Math.min(0.5, merged.extraOpacity)) : 0.25,
@@ -108,6 +116,7 @@ export function onSiteStateChange(
     if (
       before.mode !== after.mode ||
       before.autoApply !== after.autoApply ||
+      before.qwenModelLabel !== after.qwenModelLabel ||
       before.theme !== after.theme || before.extraOpacity !== after.extraOpacity
     ) {
       cb(after)

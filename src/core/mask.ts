@@ -1,4 +1,4 @@
-import {getSiteState, onSiteStateChange} from './storage'
+import {getSiteState, onSiteStateChange, normalizeQwenModelLabel} from './storage'
 
 export type CssProvider = string | ((theme?: string) => string)
 
@@ -17,7 +17,9 @@ export class MaskEngine {
   private booted = false
   private originalTitle: string | null = null
   private titleObserver: MutationObserver | null = null
-  private originalFavicon: string | null = null
+  private faviconObserver: MutationObserver | null = null
+  private faviconOriginals = new Map<HTMLLinkElement, {href: string | null; type: string | null; sizes: string | null}>()
+  private createdFavicon: HTMLLinkElement | null = null
   private wasDark = false
   private classObserver: MutationObserver | null = null
   private forceLight = true
@@ -41,10 +43,10 @@ export class MaskEngine {
   }
 
   /** 注入（或复用）style 标签并挂上开关 class；幂等。 */
-  apply(theme?: string, extraOpacity = 0.25): void {
+  apply(theme?: string, extraOpacity = 0.25, qwenModelLabel?: string): void {
     this.forceLight = this.options?.forceLight?.(theme) ?? true
     const opacity = Number.isFinite(extraOpacity) ? Math.max(0, Math.min(0.5, extraOpacity)) : 0.25
-    const cssText = `${this.resolveCss(theme)}\nhtml.skm-mask-on { --skm-extra-opacity: ${opacity}; }`
+    const cssText = `${this.resolveCss(theme)}\nhtml.skm-mask-on { --skm-extra-opacity: ${opacity}; --skm-qwen-model-label: ${JSON.stringify(normalizeQwenModelLabel(qwenModelLabel))}; }`
     let el = this.styleEl
     if (!el) {
       el = document.createElement('style')
@@ -114,22 +116,51 @@ export class MaskEngine {
       }
     }
 
-    // Favicon 伪装
+    // Replace every tab icon candidate; the site can add or rewrite them on navigation.
+    this.restoreFavicons()
     const disguisedFavicon = this.options?.getFavicon?.(theme)
     if (disguisedFavicon) {
-      let iconLink = document.querySelector("link[rel*='icon']") as HTMLLinkElement | null
-      if (iconLink) {
-        if (this.originalFavicon === null) {
-          this.originalFavicon = iconLink.href
+      const updateIcons = () => {
+        const icons = Array.from(document.querySelectorAll<HTMLLinkElement>('link[rel~="icon"]'))
+        if (!icons.length && document.head) {
+          const icon = document.createElement('link')
+          icon.rel = 'icon'
+          this.createdFavicon = icon
+          document.head.appendChild(icon)
+          icons.push(icon)
         }
-        iconLink.href = disguisedFavicon
-      } else {
-        iconLink = document.createElement('link')
-        iconLink.rel = 'shortcut icon'
-        iconLink.href = disguisedFavicon
-        document.head?.appendChild(iconLink)
+        for (const icon of icons) {
+          if (!this.faviconOriginals.has(icon) && icon !== this.createdFavicon) {
+            this.faviconOriginals.set(icon, {
+              href: icon.getAttribute('href'), type: icon.getAttribute('type'), sizes: icon.getAttribute('sizes'),
+            })
+          }
+          if (icon.href !== disguisedFavicon) icon.href = disguisedFavicon
+          // A stale SVG MIME type or size hint can prevent PNG selection.
+          if (icon.hasAttribute('type')) icon.removeAttribute('type')
+          if (icon.hasAttribute('sizes')) icon.removeAttribute('sizes')
+        }
+      }
+      updateIcons()
+      this.faviconObserver = new MutationObserver(updateIcons)
+      this.faviconObserver.observe(document.head ?? document.documentElement, {
+        childList: true, subtree: true, attributes: true, attributeFilter: ['href', 'rel', 'type', 'sizes'],
+      })
+    }
+  }
+
+  private restoreFavicons(): void {
+    this.faviconObserver?.disconnect()
+    this.faviconObserver = null
+    this.createdFavicon?.remove()
+    this.createdFavicon = null
+    for (const [icon, attributes] of this.faviconOriginals) {
+      for (const [name, value] of Object.entries(attributes)) {
+        if (value === null) icon.removeAttribute(name)
+        else icon.setAttribute(name, value)
       }
     }
+    this.faviconOriginals.clear()
   }
 
   /** 移除开关 class 和 style 标签；恢复标题和 Favicon；还原深色模式；幂等。 */
@@ -146,13 +177,7 @@ export class MaskEngine {
       this.originalTitle = null
     }
 
-    if (this.originalFavicon !== null) {
-      const iconLink = document.querySelector("link[rel*='icon']") as HTMLLinkElement | null
-      if (iconLink) {
-        iconLink.href = this.originalFavicon
-      }
-      this.originalFavicon = null
-    }
+    this.restoreFavicons()
 
     if (this.wasDark) {
       document.documentElement?.classList.add('dark')
@@ -188,12 +213,12 @@ export class MaskEngine {
 
     const [state] = await Promise.all([getSiteState(host), docElReady])
     if (state.mode === 'mask' && state.autoApply) {
-      this.apply(state.theme, state.extraOpacity)
+      this.apply(state.theme, state.extraOpacity, state.qwenModelLabel)
     }
 
     this.unsubscribe = onSiteStateChange(host, (next) => {
       if (next.mode === 'mask') {
-        this.apply(next.theme, next.extraOpacity)
+        this.apply(next.theme, next.extraOpacity, next.qwenModelLabel)
       } else {
         this.remove()
       }

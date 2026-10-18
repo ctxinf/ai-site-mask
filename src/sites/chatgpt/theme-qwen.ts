@@ -1,6 +1,9 @@
+const qwenLogoUrl = chrome.runtime.getURL('images/qwen-logo.svg')
+const qwenLogoDarkUrl = chrome.runtime.getURL('images/qwen-logo-dark.svg')
 /** Qwen-inspired light skin. Keep the site's controls, model names and message DOM intact. */
 export const qwenThemeCss = `
 html.skm-mask-on {
+  --skm-qwen-logo: url("${qwenLogoUrl}");
   --skm-qwen-scheme: light;
   --skm-qwen-page: #ffffff;
   --skm-qwen-composer: #ffffff;
@@ -19,6 +22,7 @@ html.skm-mask-on {
   --skm-qwen-scrollbar: #d3d3d7;
 }
 html.skm-mask-on[data-theme="dark"], html.skm-mask-on.dark {
+  --skm-qwen-logo: url("${qwenLogoDarkUrl}");
   --skm-qwen-scheme: dark;
   --skm-qwen-page: #212121;
   --skm-qwen-composer: #292929;
@@ -126,8 +130,8 @@ html.skm-mask-on {
   --composer-surface-border-radius: 28px !important;
 }
 html.skm-mask-on body {
-  --color-surface: var(--skm-qwen-sidebar) !important;
-  background: var(--skm-qwen-sidebar) !important;
+  --color-surface: var(--skm-qwen-page) !important;
+  background: var(--skm-qwen-page) !important;
   color: var(--skm-qwen-text) !important;
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif !important;
 }
@@ -154,17 +158,7 @@ html.skm-mask-on nav[aria-label="聊天记录"] {
 }
 html.skm-mask-on #app-shell-sidebar { --height-token-nav-row: 36px; }
 
-/* Respect the native collapsed state and mobile drawer. */
-@media (min-width: 1024px) {
-  html.skm-mask-on [style*="--app-shell-animated-left-panel-width"]:has([data-app-shell-sidebar-trigger][aria-expanded="true"]) {
-    --app-shell-left-panel-width: 232px !important;
-    --app-shell-animated-left-panel-width: 232px !important;
-  }
-  html.skm-mask-on aside.app-shell-left-panel:has([data-app-shell-sidebar-trigger][aria-expanded="true"]) > div {
-    width: 232px !important;
-    min-width: 232px !important;
-  }
-}
+/* Sidebar width and resize handles follow the native layout. */
 html.skm-mask-on #app-shell-sidebar .sidebar-item {
   border-radius: 9px !important;
   transition: background-color 120ms ease;
@@ -185,7 +179,11 @@ html.skm-mask-on button[aria-label*="current mode: ChatGPT" i] > span > span:fir
 }
 html.skm-mask-on button[aria-label*="当前模式：ChatGPT"] > span > span:first-child::after,
 html.skm-mask-on button[aria-label*="current mode: ChatGPT" i] > span > span:first-child::after {
-  content: "Qwen";
+  content: "";
+  display: inline-block;
+  width: 75px;
+  height: 20px;
+  background: var(--skm-qwen-logo) center / contain no-repeat;
   font-size: 21px;
   font-weight: 650;
   letter-spacing: -0.8px;
@@ -204,21 +202,30 @@ html.skm-mask-on main:has([data-composer-placement="home"]) h1:not(article *):no
   font-weight: 400;
   letter-spacing: -0.4px;
 }
-/* Style the composer surface, not every nested div or the editor's document. */
-html.skm-mask-on [data-composer-surface],
-html.skm-mask-on form:has([data-composer-markdown]),
-html.skm-mask-on form:has(#prompt-textarea) {
-  background-color: var(--skm-qwen-composer) !important;
-  border: 1px solid var(--skm-qwen-border) !important;
-  border-radius: 28px !important;
-  box-shadow: 0 2px 8px #25214b05 !important;
-  transition: border-color 150ms ease, box-shadow 150ms ease;
+/* One rounded surface: portals and inner layout must not paint square corners. */
+html.skm-mask-on form[data-chatgpt-composer] {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
-html.skm-mask-on [data-composer-surface]:focus-within,
-html.skm-mask-on form:has([data-composer-markdown]):focus-within,
-html.skm-mask-on form:has(#prompt-textarea):focus-within {
-  border-color: var(--skm-qwen-focus) !important;
-  box-shadow: 0 0 0 3px var(--skm-qwen-accent)0c !important;
+html.skm-mask-on [data-composer-surface],
+html.skm-mask-on [data-composer-surface-variant] {
+  background: var(--skm-qwen-page) !important;
+  border-radius: 30px !important;
+  box-shadow: none !important;
+}
+/* Native thread composers reset borders with !important in this layer.
+   Important layered rules outrank unlayered rules regardless of specificity. */
+@layer components {
+  html.skm-mask-on [data-composer-surface],
+  html.skm-mask-on [data-composer-surface-variant] {
+    border: 1px solid var(--skm-qwen-border) !important;
+  }
+}
+html.skm-mask-on [data-composer-body] {
+  background: transparent !important;
+  border-radius: inherit;
 }
 html.skm-mask-on [data-composer-markdown],
 html.skm-mask-on #prompt-textarea {
@@ -264,19 +271,7 @@ html.skm-mask-on [data-app-shell-titlebar] [role="group"][aria-label="撰写器�
 }
 /* Extra ChatGPT features keep their native position and hit targets. */
 html.skm-mask-on [data-app-shell-titlebar] [role="group"][aria-label="撰写器模式"],
-html.skm-mask-on main:has([data-composer-placement="home"]) [class~="group/home-suggestion-list-item"],
-html.skm-mask-on #app-shell-sidebar [data-sidebar-destination="builtin:automations"],
-html.skm-mask-on #app-shell-sidebar [data-sidebar-destination="builtin:library"],
-html.skm-mask-on #app-shell-sidebar [data-sidebar-destination="builtin:skills"],
-html.skm-mask-on #app-shell-sidebar .sidebar-item[aria-haspopup="menu"]:not([data-sidebar-destination]),
-html.skm-mask-on #app-shell-sidebar .sidebar-item[aria-label="定时任务"],
-html.skm-mask-on #app-shell-sidebar .sidebar-item[aria-label="资料库"],
-html.skm-mask-on #app-shell-sidebar .sidebar-item[aria-label="插件"],
-html.skm-mask-on #app-shell-sidebar .sidebar-item[aria-label="探索"],
-html.skm-mask-on #app-shell-sidebar .sidebar-item[aria-label="Tasks"],
-html.skm-mask-on #app-shell-sidebar .sidebar-item[aria-label="Library"],
-html.skm-mask-on #app-shell-sidebar .sidebar-item[aria-label="Apps"],
-html.skm-mask-on #app-shell-sidebar .sidebar-item[aria-label="Explore"] {
+html.skm-mask-on main:has([data-composer-placement="home"]) [class~="group/home-suggestion-list-item"] {
   opacity: var(--skm-extra-opacity, .25) !important;
   transition: opacity 150ms ease;
 }
@@ -289,6 +284,98 @@ html.skm-mask-on #app-shell-sidebar .sidebar-item:is(:hover, :focus-within) {
   html.skm-mask-on [data-app-shell-titlebar] [role="group"],
   html.skm-mask-on [class~="group/home-suggestion-list-item"],
   html.skm-mask-on #app-shell-sidebar .sidebar-item { transition: none; }
+}
+/* The thread footer shares the page surface in both color schemes. */
+html.skm-mask-on [data-composer-surface-variant] {
+  background-color: var(--skm-qwen-page) !important;
+}
+html.skm-mask-on [data-chatgpt-composer][data-composer-placement="thread"] {
+  position: relative;
+  margin-bottom: 28px;
+}
+html.skm-mask-on [data-chatgpt-composer][data-composer-placement="thread"]::after {
+  content: "人工智能生成的内容可能不准确。";
+  position: absolute;
+  top: calc(100% + 8px);
+  inset-inline: 0;
+  color: var(--skm-qwen-muted);
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 16px;
+  text-align: center;
+  pointer-events: none;
+}
+html.skm-mask-on [data-app-action-timeline-scroll] .text-center[data-markdown-copy="exclude"] {
+  display: none !important;
+}
+html.skm-mask-on [data-app-shell-titlebar] div:has(> button:is([aria-label="更多"], [aria-label="More" i])),
+html.skm-mask-on [data-app-shell-titlebar] button:is([aria-label="更多"], [aria-label="More" i]):not(:hover):not(:focus-visible):not([data-state="open"]) {
+  background: transparent !important;
+}
+/* Keep the native account menu hit target and username. */
+html.skm-mask-on #app-shell-sidebar div:has(> button[aria-label="打开个人资料菜单"]):has(> .pointer-events-none),
+html.skm-mask-on #app-shell-sidebar div:has(> button[aria-label="Open profile menu" i]):has(> .pointer-events-none) {
+  min-height: 64px;
+  padding: 12px 76px 12px 16px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+html.skm-mask-on #app-shell-sidebar div:has(> button:is([aria-label="打开个人资料菜单"], [aria-label="Open profile menu" i])) > .pointer-events-none img {
+  width: 30px;
+  height: 30px;
+  background: #6155f5;
+}
+html.skm-mask-on #app-shell-sidebar div:has(> button:is([aria-label="打开个人资料菜单"], [aria-label="Open profile menu" i])) > .pointer-events-none .text-xs.select-none.truncate {
+  font-size: 0 !important;
+}
+html.skm-mask-on #app-shell-sidebar div:has(> button:is([aria-label="打开个人资料菜单"], [aria-label="Open profile menu" i])) > .pointer-events-none .text-xs.select-none.truncate::after {
+  content: "Free";
+  font-size: 12px;
+  color: var(--skm-qwen-muted);
+}
+html.skm-mask-on #app-shell-sidebar div:has(> button:is([aria-label="打开个人资料菜单"], [aria-label="Open profile menu" i])):has(> .pointer-events-none)::after {
+  content: "升级";
+  position: absolute;
+  inset-inline-start: auto;
+  bottom: auto;
+  width: auto;
+  height: auto;
+  box-sizing: border-box;
+  inset-inline-end: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 5px 12px;
+  border: 1px solid var(--skm-qwen-border);
+  border-radius: 9px;
+  font-size: 12px;
+  line-height: 20px;
+  color: var(--skm-qwen-text);
+  pointer-events: none;
+}
+/* Static decoration in the conversation header; never acts as a model selector. */
+html.skm-mask-on [data-app-shell-main-titlebar]::before {
+  content: var(--skm-qwen-model-label, "Qwen3.7-Plus") "  ⌄";
+  display: block;
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-inline-start: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--skm-qwen-text);
+  pointer-events: none;
+}
+html.skm-mask-on [data-app-shell-titlebar] div:has(> button:is([aria-label="分享"], [aria-label="Share" i])) {
+  background: transparent !important;
+}
+html.skm-mask-on [data-app-shell-titlebar] button:is([aria-label="分享"], [aria-label="Share" i]) {
+  opacity: 0 !important;
+  transition: opacity 150ms ease;
+}
+html.skm-mask-on [data-app-shell-titlebar] button:is([aria-label="分享"], [aria-label="Share" i]):is(:hover, :focus-visible, [data-state="open"]) {
+  opacity: 1 !important;
 }
 html.skm-mask-on ::selection { background: var(--skm-qwen-selection); }
 html.skm-mask-on * { scrollbar-color: var(--skm-qwen-scrollbar) transparent; }
