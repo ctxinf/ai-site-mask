@@ -74,6 +74,25 @@ button {
   background:#fff;
   min-height:220px;
 }
+.popup {
+  position:relative;
+  isolation:isolate;
+}
+.popup::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background:radial-gradient(ellipse at 90% 12%,#c6b0ff66,transparent 65%),
+    radial-gradient(ellipse at 0% 75%,#badff74d,transparent 65%),
+    linear-gradient(145deg,#fcfaff,#f5f1ff);
+  opacity:0;
+  transition:opacity .7s cubic-bezier(.22,1,.36,1);
+}
+.popup.is-enabled::before {
+  opacity:1;
+}
 .popup-header {
   display:flex;
   align-items:center;

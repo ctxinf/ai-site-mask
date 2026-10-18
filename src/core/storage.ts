@@ -1,7 +1,5 @@
-// chrome.storage.sync 封装：各站点的 mask 开关状态。
+// chrome.storage.sync 封装：各站点偏好；页面临时开关由 MaskEngine 管理。
 // Site switches remain independent; shared preferences override legacy per-site display fields.
-
-export type MaskMode = 'original' | 'mask'
 
 export const DEFAULT_DEEPSEEK_USERNAME = '133****3333'
 export function normalizeDeepseekUsername(value?: string): string {
@@ -14,7 +12,6 @@ export function normalizeQwenModelLabel(value?: string): string {
 }
 
 export interface SiteState {
-  mode: MaskMode
   autoApply: boolean
   /** 当前站点选择的伪装皮肤。 */
   theme?: string
@@ -54,7 +51,6 @@ function normalizeSiteState(
   const state: SiteState = {
     deepseekUsername: normalizeDeepseekUsername(preferences.deepseekUsername ?? raw?.deepseekUsername),
     qwenModelLabel: normalizeQwenModelLabel(preferences.qwenModelLabel ?? raw?.qwenModelLabel),
-    mode: raw?.mode === 'mask' ? 'mask' : 'original',
     autoApply:
       typeof raw?.autoApply === 'boolean' ? raw.autoApply : globalAutoApplyDefault,
     extraOpacity: normalizeOpacity(preferences.extraOpacity ?? raw?.extraOpacity),
@@ -92,7 +88,7 @@ export async function setSiteState(
   const stored: SiteState = {
     deepseekUsername: normalizeDeepseekUsername(merged.deepseekUsername),
     qwenModelLabel: normalizeQwenModelLabel(merged.qwenModelLabel),
-    mode: merged.mode, autoApply: merged.autoApply,
+    autoApply: merged.autoApply,
     extraOpacity: typeof merged.extraOpacity === 'number' && Number.isFinite(merged.extraOpacity)
       ? Math.max(0, Math.min(0.5, merged.extraOpacity)) : 0.25,
   }
@@ -131,7 +127,6 @@ export function onSiteStateChange(
     )
     const after = normalizeSiteState(newRaw?.sites?.[host], globalDefault, newRaw?.preferences)
     if (
-      before.mode !== after.mode ||
       before.autoApply !== after.autoApply ||
       before.deepseekUsername !== after.deepseekUsername ||
       before.qwenModelLabel !== after.qwenModelLabel ||

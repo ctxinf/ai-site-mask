@@ -16,6 +16,8 @@ export class MaskEngine {
   private readonly styleId: string
   private unsubscribe: (() => void) | null = null
   private booted = false
+  private enabled = false
+  private messageListener: Parameters<typeof chrome.runtime.onMessage.addListener>[0] | null = null
   private originalTitle: string | null = null
   private titleObserver: MutationObserver | null = null
   private faviconObserver: MutationObserver | null = null
@@ -196,8 +198,8 @@ export class MaskEngine {
   /**
    * content script 入口（run_at=document_start）调用：
    * 1. 并发等待 documentElement 可用 + 读取 storage；
-   * 2. 若 mode=mask 且 autoApply=true，第一时间加 class（防闪烁）；
-   * 3. 订阅 storage 变化，mode 变化时自动 apply/remove。
+   * 2. 仅根据 autoApply 初始化当前页面的临时开关；
+   * 3. 接收 popup 的页面命令，偏好变化仅更新已开启的页面。
    */
   async boot(host: string): Promise<void> {
     if (this.booted) {
@@ -220,7 +222,8 @@ export class MaskEngine {
     })
 
     const [state] = await Promise.all([getSiteState(host), docElReady])
-    if (state.mode === 'mask' && state.autoApply) {
+    this.enabled = state.autoApply
+    if (this.enabled) {
       this.apply(state.theme, state.extraOpacity, state.qwenModelLabel)
     }
 
@@ -235,13 +238,25 @@ export class MaskEngine {
       }, 100)
     }
 
-    this.unsubscribe = onSiteStateChange(host, (next) => {
-      if (next.mode === 'mask') {
-        this.apply(next.theme, next.extraOpacity, next.qwenModelLabel)
-      } else {
-        this.requestedStyle = null
-        this.remove()
+    this.messageListener = (message, _sender, respond) => {
+      if (message?.type === 'skm:get-page-state') {
+        respond({enabled: this.enabled})
+      } else if (message?.type === 'skm:set-page-state' && typeof message.enabled === 'boolean') {
+        getSiteState(host).then(next => {
+          this.enabled = message.enabled
+          if (this.enabled) this.apply(next.theme, next.extraOpacity, next.qwenModelLabel)
+          else {
+            this.requestedStyle = null
+            this.remove()
+          }
+          respond({enabled: this.enabled})
+        }).catch(error => respond({error: String(error)}))
+        return true
       }
+    }
+    chrome.runtime.onMessage.addListener(this.messageListener)
+    this.unsubscribe = onSiteStateChange(host, (next) => {
+      if (this.enabled) this.apply(next.theme, next.extraOpacity, next.qwenModelLabel)
     })
   }
 
@@ -250,6 +265,9 @@ export class MaskEngine {
     if (this.routeTimer !== null) clearInterval(this.routeTimer)
     this.routeTimer = null
     this.requestedStyle = null
+    if (this.messageListener) chrome.runtime.onMessage.removeListener(this.messageListener)
+    this.messageListener = null
+    this.enabled = false
     this.unsubscribe?.()
     this.unsubscribe = null
     this.booted = false
