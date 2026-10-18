@@ -1,6 +1,6 @@
 /** Shared metadata; content scripts and React views use the same skin fallback. */
 export const SKINS = {
-  qwen: {name: '通义千问', title: 'Qwen', image: 'images/qwen-favicon.png', favicon: 'images/qwen-favicon.png'},
+  qwen: {name: 'Qwen', title: 'Qwen', image: 'images/qwen-favicon.png', favicon: 'images/qwen-favicon.png'},
   deepseek: {name: 'DeepSeek', title: 'DeepSeek', image: 'images/deepseek-icon.svg', favicon: 'images/deepseek-favicon.svg'},
 } as const
 export type Skin = keyof typeof SKINS

@@ -9,7 +9,7 @@
       "128": "images/icon-128.png"
     },
     "default_popup": "action/index.html",
-    "default_title": "AI Site Skin Mask"
+    "default_title": "Ai Site Mask"
   },
   "chromium:manifest_version": 3,
   "content_scripts": [
@@ -51,7 +51,7 @@
       "run_at": "document_start"
     }
   ],
-  "description": "浏览器插件：把 chatgpt.com / claude.ai 等网页版 AI 的界面换成 deepseek / qwen 风格（mask 换肤，不破坏原有功能）",
+  "description": "将 ChatGPT、Claude 等 AI 网站的界面伪装成 Qwen（qwen.ai 国际站）或 DeepSeek 风格，保留原生功能。",
   "firefox:browser_action": {
     "default_icon": {
       "16": "images/icon-16.png",
@@ -61,7 +61,7 @@
       "128": "images/icon-128.png"
     },
     "default_popup": "action/index.html",
-    "default_title": "AI Site Skin Mask"
+    "default_title": "Ai Site Mask"
   },
   "firefox:browser_specific_settings": {
     "gecko": {
@@ -81,7 +81,7 @@
     "64": "images/icon-64.png",
     "128": "images/icon-128.png"
   },
-  "name": "AI Site Skin Mask",
+  "name": "Ai Site Mask",
   "version": "0.1.0",
   "permissions": [
     "storage",
