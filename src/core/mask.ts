@@ -105,25 +105,22 @@ export class MaskEngine {
         this.originalTitle = document.title
       }
       document.title = disguisedTitle
-      // 对抗 SPA 动态重写 title
-      if (!this.titleObserver) {
-        const titleEl = document.querySelector('title')
-        if (titleEl) {
-          this.titleObserver = new MutationObserver(() => {
-            if (
-              document.documentElement?.classList.contains('skm-mask-on') &&
-              document.title !== disguisedTitle
-            ) {
-              document.title = disguisedTitle
-            }
-          })
-          this.titleObserver.observe(titleEl, {
-            childList: true,
-            characterData: true,
-            subtree: true,
-          })
+      // Observe the container: document_start may precede <title>, and Gemini
+      // can replace the title node entirely during SPA navigation.
+      this.titleObserver = new MutationObserver(() => {
+        if (
+          document.documentElement?.classList.contains('skm-mask-on') &&
+          document.title !== disguisedTitle
+        ) {
+          if (!this.originalTitle && document.title) this.originalTitle = document.title
+          document.title = disguisedTitle
         }
-      }
+      })
+      this.titleObserver.observe(document.head ?? document.documentElement, {
+        childList: true,
+        characterData: true,
+        subtree: true,
+      })
     }
 
     // Replace every tab icon candidate; the site can add or rewrite them on navigation.

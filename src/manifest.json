@@ -40,6 +40,15 @@
         "https://grok.com/*"
       ],
       "run_at": "document_start"
+    },
+    {
+      "js": [
+        "sites/gemini/index.ts"
+      ],
+      "matches": [
+        "https://gemini.google.com/*"
+      ],
+      "run_at": "document_start"
     }
   ],
   "description": "浏览器插件：把 chatgpt.com / claude.ai 等网页版 AI 的界面换成 deepseek / doubao / qwen 风格（mask 换肤，不破坏原有功能）",
@@ -91,7 +100,8 @@
       "matches": [
         "https://chatgpt.com/*",
         "https://chat.openai.com/*",
-        "https://grok.com/*"
+        "https://grok.com/*",
+        "https://gemini.google.com/*"
       ]
     }
   ],
