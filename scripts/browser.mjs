@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Extension.js owns the browser; agent-browser owns interaction and screenshots.
+// Attach to the existing Brave or a managed Chromium; agent-browser handles interaction and screenshots.
 import {execFileSync} from 'node:child_process'
 import {createHash} from 'node:crypto'
 import {mkdirSync, readFileSync} from 'node:fs'
@@ -66,7 +66,7 @@ try {
     // Each surface has a pinned tab. Human tabs and the other surface stay untouched.
     if (surface === 'popup' && current !== popup) run(['open', popup], true)
     if (surface === 'page' && current === 'about:blank' && args[0] !== 'open') {
-      run(['open', process.env.WORKFLOW_PAGE_URL || 'http://127.0.0.1:8931'], true)
+      run(['open', process.env.WORKFLOW_PAGE_URL || 'https://chatgpt.com/'], true)
     }
     if (surface === 'popup') run(['wait', '#root > *'], true)
   }

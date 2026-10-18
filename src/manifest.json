@@ -1,11 +1,5 @@
 {
   "$schema": "https://json.schemastore.org/chrome-manifest.json",
-  "background": {
-    "chromium:service_worker": "background.ts",
-    "firefox:scripts": [
-      "background.ts"
-    ]
-  },
   "chromium:action": {
     "default_icon": {
       "16": "images/icon-16.png",

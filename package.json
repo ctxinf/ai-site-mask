@@ -24,7 +24,6 @@
     "doctor": "extension doctor",
     "install:browsers": "extension install chromium",
     "logs": "extension logs --follow --context all --level all",
-    "logs:bg": "extension logs --follow --context background --level all",
     "logs:content": "extension logs --follow --context content --level all",
     "logs:ndjson": "extension logs --follow --context all --level all --output ndjson",
     "logs:popup": "extension logs --follow --context popup --level all",
@@ -35,8 +34,7 @@
     "shot:popup": "node scripts/shot.mjs --target popup",
     "browser": "node scripts/browser.mjs",
     "browser:popup": "node scripts/browser.mjs popup",
-    "browser:page": "node scripts/browser.mjs page",
-    "page": "node scripts/page.mjs"
+    "browser:page": "node scripts/browser.mjs page"
   },
   "type": "module",
   "version": "0.1.0"

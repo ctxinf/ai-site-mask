@@ -35,3 +35,5 @@ extension-env.d.ts
 
 # workflow scratch (screenshots etc.)
 .workflow/
+*.md
+/docs/

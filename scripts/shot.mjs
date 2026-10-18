@@ -20,7 +20,7 @@ try {
   for (const surface of values.target === 'all' ? ['popup', 'page'] : [values.target]) {
     if (surface === 'page' && values.url) run(surface, 'open', values.url)
     if (surface === 'popup') run(surface, 'wait', 'input[type=checkbox]:enabled')
-    else run(surface, 'wait', '--fn', 'document.readyState === "complete" && (!!document.querySelector("main") || !!document.querySelector("[data-extension-workflow]")?.shadowRoot?.querySelector(".content_script"))')
+    else run(surface, 'wait', '--fn', 'document.readyState === "complete" && !!document.querySelector("main")')
     run(surface, 'eval', 'document.fonts.ready.then(() => true)')
     run(surface, 'screenshot', join(out, `${surface}.png`))
   }
