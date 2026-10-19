@@ -3,9 +3,9 @@
 </p>
 
 <p align="center">
-  <a href="https://chromewebstore.google.com/detail/ai-site-mask/nallpeeclphefbfkmijoobdmnjoglhlh"><img src="webstore/chrome-download.svg" width="190" height="48" alt="Chrome Web Store · Go Download"></a>
+  <a href="https://chromewebstore.google.com/detail/ai-site-mask/nallpeeclphefbfkmijoobdmnjoglhlh"><img src="webstore/chrome-download.svg" width="190" height="48" alt="Chrome Web Store · Install"></a>
   &nbsp;&nbsp;
-  <a href="https://microsoftedge.microsoft.com/addons/detail/dfjmfjfjnlhcahbpnkafhchajpjemjpi"><img src="webstore/edge-download.svg" width="190" height="48" alt="Edge Add-ons · Go Download"></a>
+  <a href="https://microsoftedge.microsoft.com/addons/detail/dfjmfjfjnlhcahbpnkafhchajpjemjpi"><img src="webstore/edge-download.svg" width="190" height="48" alt="Edge Add-ons · Install"></a>
 </p>
 
 
