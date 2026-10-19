@@ -953,3 +953,11 @@ button {
 .popup.is-enabled .skin-preview {background:rgb(250 249 253 / 75%)}
 .popup.is-enabled .mini-sidebar {background:rgb(241 239 248 / 75%)}
 .popup.is-enabled .mini-bubble {background:color-mix(in srgb,var(--skin-accent) 9%,transparent)}
+
+.popup-brand-site {display:flex;align-items:center;gap:10px;min-width:0}
+.popup-site-icon {display:grid;place-items:center;width:27px;height:27px;flex:none}
+.popup-site-icon img {width:23px;height:23px;object-fit:contain}
+.popup .icon-button:disabled,.popup .skin-card:disabled {opacity:.45;cursor:default}
+.popup .icon-button:disabled:hover {background:transparent;color:#74717f}
+
+.unsupported-site-notice {color:#c43848;font-size:12px;line-height:1.6;margin:-8px 0 12px}

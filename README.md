@@ -12,8 +12,6 @@
 
 为 ChatGPT / Claude / Gemini / Grok 换上 Qwen / DeepSeek 外观，保留原生功能，支持皮肤切换与按站点自动应用。
 
-从 [Releases](https://github.com/ctxinf/ai-site-mask/releases/latest) 下载扩展 ZIP，解压后在 Chrome / Edge / Brave 的扩展管理页开启开发者模式，选择「加载已解压的扩展程序」。
-
 **ChatGPT · Qwen 外观与皮肤切换**
 
 ![ChatGPT 换上 Qwen 外观，在扩展弹出页切换皮肤与自动应用设置](webstore/screenshot-1.png)
