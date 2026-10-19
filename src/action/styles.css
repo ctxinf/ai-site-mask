@@ -142,6 +142,39 @@ button {
 .toggle-row strong {
   font-weight:600;
 }
+/* Decorative mask stays behind the controls and fades into the popup background. */
+.popup-controls {
+  position:relative;
+}
+.popup-mask-backdrop {
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  overflow:hidden;
+  pointer-events:none;
+  opacity:0;
+  transform:translate(-24px,-14px);
+  transition:opacity .22s ease,transform .22s ease;
+}
+.popup-mask-backdrop img {
+  position:absolute;
+  width:300px;
+  height:auto;
+  max-width:none;
+  left:8px;
+  top:0;
+}
+.popup-mask-backdrop.is-visible {
+  opacity:.1474;
+  transform:translate(0,0);
+}
+.popup-mask-backdrop.is-entering {
+  animation:mask-background-enter 1.2s cubic-bezier(.22,1,.36,1) .666s both;
+}
+@keyframes mask-background-enter {
+  from {opacity:0;transform:translate(-24px,-14px)}
+  to {opacity:.1474;transform:translate(0,0)}
+}
 .toggle-row input {
   position:absolute;
   right:0;
@@ -795,6 +828,9 @@ button {
 @media(prefers-reduced-motion:reduce) {
   * {
     transition:none!important;
+  }
+  .popup-mask-backdrop.is-entering {
+    animation:none;
   }
 }
 
