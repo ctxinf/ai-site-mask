@@ -57,6 +57,23 @@ test('legacy preferences remain readable until shared preferences are saved', as
   assert.equal(events.length, 1)
 })
 
+test('compact popup preference preserves site settings and does not notify page state', async () => {
+  saved = {sites: {'grok.com': {autoApply: false, theme: 'deepseek'}}}
+  assert.equal((await getPreferences()).popupCompact, false)
+  const before = structuredClone(saved.sites)
+  const events = []
+  const unsubscribe = onSiteStateChange('grok.com', value => events.push(value))
+  await setPreferences({popupCompact: true})
+  assert.equal((await getPreferences()).popupCompact, true)
+  assert.deepEqual(saved.sites, before)
+  assert.equal(events.length, 0)
+  await setPreferences({extraOpacity: .3})
+  assert.equal((await getPreferences()).popupCompact, true)
+  await setPreferences({popupCompact: false})
+  assert.equal((await getPreferences()).popupCompact, false)
+  unsubscribe()
+})
+
 test('destroy during async boot prevents late observers and page changes', async () => {
   saved = {sites: {'chatgpt.com': {autoApply: true}}}
   globalThis.document = {documentElement: {classList: {remove() {}, add() { throw new Error('late apply') } }}, getElementById() { return null }}

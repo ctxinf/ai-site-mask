@@ -843,3 +843,78 @@ button {
   width: 34px;
   height: 34px;
 }
+
+/* The compact popup intentionally carries no branding or descriptive copy. */
+.compact-popup {
+  width:240px;
+  min-height:56px;
+  padding:10px 12px;
+  background:#fff;
+  color:#55565b;
+}
+.compact-row {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  height:36px;
+}
+.compact-switch {
+  width:36px;
+  height:22px;
+  padding:3px;
+  border:0;
+  border-radius:20px;
+  background:#d5d6d9;
+  flex:none;
+}
+.compact-switch span {
+  display:block;
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 1px 3px #0002;
+  transition:transform .16s;
+}
+.compact-switch[aria-checked="true"] {background:#62666f}
+.compact-switch[aria-checked="true"] span {transform:translateX(14px)}
+.compact-tabs {
+  display:flex;
+  gap:2px;
+  padding:3px;
+  border-radius:7px;
+  background:#f1f1f2;
+}
+.compact-tabs button {
+  width:30px;
+  height:26px;
+  border:0;
+  border-radius:5px;
+  background:transparent;
+  color:#8a8b90;
+  font-size:12px;
+}
+.compact-tabs button[aria-pressed="true"] {
+  background:#555b66;
+  color:#fff;
+  font-weight:700;
+  box-shadow:0 1px 3px #00000020;
+}
+.compact-tabs button:not(:disabled):not([aria-pressed="true"]):hover {
+  background:#e2e3e6;
+  color:#555b66;
+}
+.compact-popup button:disabled {opacity:.45}
+.compact-settings {margin-left:auto;color:#96979b}
+.compact-settings:hover {background:#f2f2f3;color:#55565b}
+.compact-popup button:focus-visible {outline:2px solid #8d9199;outline-offset:3px}
+.sr-only {
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip-path:inset(50%);
+  white-space:nowrap;
+}

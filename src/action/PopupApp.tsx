@@ -1,6 +1,6 @@
 import {resolveSkin, siteForHost} from '../core/catalog'
 import {useEffect, useState} from 'react'
-import {SUPPORTED_HOSTS, getSiteState, setSiteState, onSiteStateChange, type SiteState} from '../core/storage'
+import {SUPPORTED_HOSTS, getPreferences, getSiteState, setSiteState, onSiteStateChange, type SiteState} from '../core/storage'
 import {Brand, Gear, Toggle, SKINS, SkinIcon, skinsForHost} from '../ui/shared'
 
 const maskImages = {
@@ -9,6 +9,7 @@ const maskImages = {
 }
 
 export default function PopupApp() {
+  const [compact, setCompact] = useState<boolean | null>(null)
   const [tabId, setTabId] = useState<number>()
   const [enabled, setEnabled] = useState(false)
   const [maskEntering, setMaskEntering] = useState(false)
@@ -21,6 +22,9 @@ export default function PopupApp() {
     let cancelled = false
     let unsubscribe = () => {}
     ;(async () => {
+      const preferences = await getPreferences()
+      if (cancelled) return
+      setCompact(preferences.popupCompact)
       const tabs = await chrome.tabs.query({active:true, currentWindow:true})
       let h = ''
       try { h = new URL(tabs[0]?.url ?? '').hostname } catch {}
@@ -60,6 +64,17 @@ export default function PopupApp() {
   const skins = skinsForHost(host)
   const activeSkin = resolveSkin(state?.theme)
   const openOptions = () => { chrome.runtime.openOptionsPage().catch(err => setError(String(err))) }
+  if (compact === null && !error) return <main className="compact-popup" aria-label="正在读取设置" aria-busy="true"/>
+  if (compact) return <main className="compact-popup">
+    <div className="compact-row" aria-busy={!ready || busy}>
+      <button className="compact-switch" role="switch" aria-label="启用页面外观" aria-checked={enabled} disabled={!state || busy} onClick={togglePage} title={error || (!ready ? '正在读取设置…' : !state ? '当前页面不支持' : '启用页面外观')}><span/></button>
+      <div className="compact-tabs" role="group" aria-label="页面外观">
+        {(['qwen', 'deepseek'] as const).map((skin, i) => <button key={skin} aria-label={`外观 ${i + 1}`} aria-pressed={activeSkin === skin} disabled={!state || busy} onClick={() => save({theme:skin})}>{i + 1}</button>)}
+      </div>
+      <button className="icon-button compact-settings" aria-label="打开偏好设置" onClick={openOptions}><Gear/></button>
+      <span className="sr-only" role={error ? 'alert' : 'status'}>{error || (!ready ? '正在读取设置' : !state ? '当前页面不支持' : busy ? '正在保存' : '')}</span>
+    </div>
+  </main>
   return <main className={`popup ${enabled ? 'is-enabled' : ''}`}>
     <header className="popup-header"><Brand/><button className="icon-button" aria-label="打开偏好设置" onClick={openOptions}><Gear/></button></header>
     {!ready && <p className="notice" role="status">正在读取设置…</p>}
@@ -84,6 +99,6 @@ export default function PopupApp() {
       </div>
     </>}
     {error && <p className="error" role="alert">设置失败：{error}</p>}
-    <footer className="popup-footer"><span role="status">{busy ? '正在保存…' : state ? '设置已自动保存' : '只换外观，功能如常'}</span><button className="text-button" onClick={openOptions}><Gear/>偏好设置 <span aria-hidden="true">→</span></button></footer>
+    <footer className="popup-footer"><span role="status">{busy ? '正在保存…' : state ? '设置已自动保存' : '只换外观，功能如常'}</span></footer>
   </main>
 }

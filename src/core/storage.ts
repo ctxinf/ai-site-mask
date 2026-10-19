@@ -121,6 +121,7 @@ export async function getPreferences(): Promise<Required<Preferences>> {
   // Show existing values in the new editor without rewriting users' legacy settings.
   const legacy = SUPPORTED_HOSTS.map(host => sites[host]).filter(Boolean)
   return {
+    popupCompact: preferences.popupCompact === true,
     extraOpacity: normalizeOpacity(preferences.extraOpacity ?? legacy.find(s => s.extraOpacity !== undefined)?.extraOpacity),
     qwenModelLabel: normalizeQwenModelLabel(preferences.qwenModelLabel ?? legacy.find(s => s.qwenModelLabel !== undefined)?.qwenModelLabel),
     deepseekUsername: normalizeDeepseekUsername(preferences.deepseekUsername ?? legacy.find(s => s.deepseekUsername !== undefined)?.deepseekUsername),
@@ -130,6 +131,7 @@ export async function getPreferences(): Promise<Required<Preferences>> {
 export async function setPreferences(patch: Preferences): Promise<void> {
   const schema = await readSchema()
   const preferences = {...schema.preferences}
+  if (patch.popupCompact !== undefined) preferences.popupCompact = patch.popupCompact === true
   if (patch.extraOpacity !== undefined) preferences.extraOpacity = normalizeOpacity(patch.extraOpacity)
   if (patch.qwenModelLabel !== undefined) preferences.qwenModelLabel = normalizeQwenModelLabel(patch.qwenModelLabel)
   if (patch.deepseekUsername !== undefined) preferences.deepseekUsername = normalizeDeepseekUsername(patch.deepseekUsername)

@@ -19,6 +19,7 @@ export interface SiteState {
 }
 
 export interface Preferences {
+  popupCompact?: boolean
   extraOpacity?: number
   qwenModelLabel?: string
   deepseekUsername?: string

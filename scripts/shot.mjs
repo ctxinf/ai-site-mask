@@ -19,7 +19,7 @@ try {
   const run = (surface, ...args) => execFileSync(process.execPath, [join(root, 'scripts/browser.mjs'), surface, ...args], {stdio: 'inherit', timeout: 60000})
   for (const surface of values.target === 'all' ? ['popup', 'page'] : [values.target]) {
     if (surface === 'page' && values.url) run(surface, 'open', values.url)
-    if (surface === 'popup') run(surface, 'wait', 'input[type=checkbox]:enabled')
+    if (surface === 'popup') run(surface, 'wait', 'input[type=checkbox]:enabled, button[role=switch]:enabled')
     else run(surface, 'wait', '--fn', 'document.readyState === "complete" && !!document.querySelector("main, #grok-content-area")')
     run(surface, 'eval', 'Promise.race([document.fonts.ready, new Promise(resolve => setTimeout(resolve, 3000))]).then(() => true)')
     run(surface, 'screenshot', join(out, `${surface}.png`))
