@@ -15,3 +15,13 @@ export function SkinIcon({skin}: {skin:Skin}) {
   const s = SKINS[skin]
   return <img className="skin-icon" src={`../${s.image}`} alt=""/>
 }
+
+const siteIcons = {
+  chatgpt: new URL('../images/openai.svg', import.meta.url).href,
+  claude: new URL('../images/claude-color.svg', import.meta.url).href,
+  grok: new URL('../images/grok.svg', import.meta.url).href,
+  gemini: new URL('../images/gemini-color.svg', import.meta.url).href,
+}
+export function SiteIcon({site}: {site:keyof typeof siteIcons}) {
+  return <img className="nav-site-icon" src={siteIcons[site]} alt=""/>
+}

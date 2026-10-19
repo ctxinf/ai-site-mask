@@ -84,11 +84,8 @@ button {
   inset:0;
   z-index:-1;
   pointer-events:none;
-  background:radial-gradient(ellipse at 90% 12%,#c6b0ff66,transparent 65%),
-    radial-gradient(ellipse at 0% 75%,#badff74d,transparent 65%),
-    linear-gradient(145deg,#fcfaff,#f5f1ff);
+  background:linear-gradient(155deg,#211035 0%,#57346f 18%,#ad8fc6 38%,#e3d5ee 58%,#f8f2fc 78%,#fff 100%);
   opacity:0;
-  transition:opacity .7s cubic-bezier(.22,1,.36,1);
 }
 .popup.is-enabled::before {
   opacity:1;
@@ -119,7 +116,7 @@ button {
 .site-monogram {
   display:grid;
   place-items:center;
-  background:#17171c;
+  background:#fff;
   color:white;
   width:27px;
   height:27px;
@@ -844,9 +841,9 @@ button {
   height: 34px;
 }
 
-/* The compact popup intentionally carries no branding or descriptive copy. */
+/* Compact mode keeps only the controls and their switch label. */
 .compact-popup {
-  width:240px;
+  width:270px;
   min-height:56px;
   padding:10px 12px;
   background:#fff;
@@ -863,20 +860,20 @@ button {
   height:22px;
   padding:3px;
   border:0;
-  border-radius:20px;
-  background:#d5d6d9;
+  border-radius:0;
+  background:#b7b9bd;
   flex:none;
 }
 .compact-switch span {
   display:block;
   width:16px;
   height:16px;
-  border-radius:50%;
+  border-radius:0;
   background:#fff;
   box-shadow:0 1px 3px #0002;
   transition:transform .16s;
 }
-.compact-switch[aria-checked="true"] {background:#62666f}
+.compact-switch[aria-checked="true"] {background:#4caf50}
 .compact-switch[aria-checked="true"] span {transform:translateX(14px)}
 .compact-tabs {
   display:flex;
@@ -918,3 +915,15 @@ button {
   clip-path:inset(50%);
   white-space:nowrap;
 }
+
+.compact-switch-label {font-size:12px;white-space:nowrap}
+.popup.is-enabled {color:#302039;--border:#61457633;--accent:#7543f5}
+.popup.is-enabled .popup-header {color:#faf5ff}
+.popup.is-enabled .icon-button {color:#e0cfee}
+.popup.is-enabled .icon-button:hover {background:#ffffff1a}
+.popup.is-enabled .site-bar {background:#ffffffde;border-color:#ffffff66;color:#706079}
+.popup.is-enabled .site-bar strong {color:#302039}
+.popup.is-enabled .skin-helper {color:#6b5578}
+.popup.is-enabled .skin-card {background:#fffffff0;border-color:#d9c8e7;color:#302039}
+.popup.is-enabled .skin-card.selected {background:#f7edff;border-color:var(--accent)}
+.popup.is-enabled .popup-footer>span {color:#74617f}

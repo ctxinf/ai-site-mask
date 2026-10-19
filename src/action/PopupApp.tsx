@@ -1,7 +1,7 @@
 import {resolveSkin, siteForHost} from '../core/catalog'
 import {useEffect, useState} from 'react'
 import {SUPPORTED_HOSTS, getPreferences, getSiteState, setSiteState, onSiteStateChange, type SiteState} from '../core/storage'
-import {Brand, Gear, Toggle, SKINS, SkinIcon, skinsForHost} from '../ui/shared'
+import {Brand, Gear, Toggle, SKINS, SkinIcon, SiteIcon, skinsForHost} from '../ui/shared'
 
 const maskImages = {
   qwen: new URL('../images/mask-qwen-negative.svg', import.meta.url).href,
@@ -67,7 +67,8 @@ export default function PopupApp() {
   if (compact === null && !error) return <main className="compact-popup" aria-label="正在读取设置" aria-busy="true"/>
   if (compact) return <main className="compact-popup">
     <div className="compact-row" aria-busy={!ready || busy}>
-      <button className="compact-switch" role="switch" aria-label="启用页面外观" aria-checked={enabled} disabled={!state || busy} onClick={togglePage} title={error || (!ready ? '正在读取设置…' : !state ? '当前页面不支持' : '启用页面外观')}><span/></button>
+      <span className="compact-switch-label" id="compact-switch-label">开关</span>
+      <button className="compact-switch" role="switch" aria-labelledby="compact-switch-label" aria-checked={enabled} disabled={!state || busy} onClick={togglePage} title={error || (!ready ? '正在读取设置…' : !state ? '当前页面不支持' : '启用页面外观')}><span/></button>
       <div className="compact-tabs" role="group" aria-label="页面外观">
         {(['qwen', 'deepseek'] as const).map((skin, i) => <button key={skin} aria-label={`外观 ${i + 1}`} aria-pressed={activeSkin === skin} disabled={!state || busy} onClick={() => save({theme:skin})}>{i + 1}</button>)}
       </div>
@@ -80,7 +81,7 @@ export default function PopupApp() {
     {!ready && <p className="notice" role="status">正在读取设置…</p>}
     {ready && !state && !error && <div className="site-bar" role="status"><strong>非目标页面</strong></div>}
     {state && <>
-      <div className="site-bar"><span className="site-monogram">{siteForHost(host)?.glyph}</span><span>当前网站</span><strong>{host}</strong></div>
+      <div className="site-bar"><span className="site-monogram">{siteForHost(host) && <SiteIcon site={siteForHost(host)!.id}/>}</span><span>当前网站</span><strong>{host}</strong></div>
       <div className="popup-controls">
       <div className={`popup-mask-backdrop ${enabled ? 'is-visible' : ''} ${maskEntering ? 'is-entering' : ''}`} aria-hidden="true"
         onAnimationEnd={() => setMaskEntering(false)}>
