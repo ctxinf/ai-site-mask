@@ -85,7 +85,11 @@ export default function PopupApp() {
       <div className="popup-controls">
       <div className={`popup-mask-backdrop ${enabled ? 'is-visible' : ''} ${maskEntering ? 'is-entering' : ''}`} aria-hidden="true"
         onAnimationEnd={() => setMaskEntering(false)}>
-        <img src={maskImages[activeSkin]} alt=""/>
+        <span className="popup-mask-host">{siteForHost(host) && <SiteIcon site={siteForHost(host)!.id}/>}</span>
+        <span className={`popup-mask-film ${activeSkin}`}>
+          <svg viewBox="0 0 120 64" aria-hidden="true"><defs><linearGradient id="mask-film-glass" x1="0" y1="0" x2="1" y2="1"><stop stopColor="#fff" stopOpacity=".95"/><stop offset=".45" stopColor="#eee3ff" stopOpacity=".72"/><stop offset="1" stopColor="#b89bdf" stopOpacity=".85"/></linearGradient></defs><path fill="url(#mask-film-glass)" fillRule="evenodd" stroke="#fff" strokeWidth=".8" d="M4 10Q28 0 52 17L60 24 68 17Q92 0 116 10L111 37Q102 61 82 54L60 40 38 54Q18 61 9 37ZM18 24Q32 15 47 28Q33 42 21 32ZM73 28Q88 15 102 24L99 32Q87 42 73 28Z"/><path d="M9 12Q29 5 48 19M72 19Q91 5 111 12" fill="none" stroke="#fff" strokeWidth="1.3" strokeLinecap="round"/></svg>
+          <img className="popup-mask-overlay" src={maskImages[activeSkin]} alt=""/>
+        </span>
       </div>
       <Toggle checked={enabled} disabled={busy} onChange={togglePage}><strong>启用伪装</strong></Toggle>
       {enabled && <section className="skin-section"><h1>选择你的伪装:</h1><p className="skin-helper">换个外观，原生功能依旧。</p>
@@ -100,6 +104,6 @@ export default function PopupApp() {
       </div>
     </>}
     {error && <p className="error" role="alert">设置失败：{error}</p>}
-    <footer className="popup-footer"><span role="status">{busy ? '正在保存…' : state ? '设置已自动保存' : '只换外观，功能如常'}</span></footer>
+    <footer className="popup-footer"><span role="status">{busy ? '正在保存…' : state ? '设置已自动保存' : ''}</span></footer>
   </main>
 }

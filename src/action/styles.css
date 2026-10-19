@@ -153,16 +153,38 @@ button {
   transform:translate(-24px,-14px);
   transition:opacity .22s ease,transform .22s ease;
 }
-.popup-mask-backdrop img {
+.popup-mask-film {
   position:absolute;
-  width:300px;
-  height:auto;
-  max-width:none;
-  left:8px;
+  width:270px;
+  height:144px;
+  left:23px;
+  top:25px;
+  z-index:1;
+  filter:drop-shadow(0 7px 3px #24103950) drop-shadow(0 1px 0 #58377788);
+}
+.popup-mask-film svg,
+.popup-mask-backdrop .popup-mask-overlay {
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+.popup-mask-backdrop .popup-mask-overlay {opacity:.32}
+.popup-mask-film.deepseek {filter:hue-rotate(15deg) drop-shadow(0 7px 3px #182b4950) drop-shadow(0 1px 0 #38547788)}
+.popup-mask-host {
+  position:absolute;
+  left:43px;
   top:0;
+  width:230px;
+  height:230px;
+  opacity:.42;
+}
+.popup-mask-host .nav-site-icon {
+  width:100%;
+  height:100%;
 }
 .popup-mask-backdrop.is-visible {
-  opacity:.1474;
+  opacity:.65;
   transform:translate(0,0);
 }
 .popup-mask-backdrop.is-entering {
@@ -170,7 +192,7 @@ button {
 }
 @keyframes mask-background-enter {
   from {opacity:0;transform:translate(-24px,-14px)}
-  to {opacity:.1474;transform:translate(0,0)}
+  to {opacity:.65;transform:translate(0,0)}
 }
 .toggle-row input {
   position:absolute;
@@ -924,6 +946,10 @@ button {
 .popup.is-enabled .site-bar {background:#ffffffde;border-color:#ffffff66;color:#706079}
 .popup.is-enabled .site-bar strong {color:#302039}
 .popup.is-enabled .skin-helper {color:#6b5578}
-.popup.is-enabled .skin-card {background:#fffffff0;border-color:#d9c8e7;color:#302039}
-.popup.is-enabled .skin-card.selected {background:#f7edff;border-color:var(--accent)}
+.popup.is-enabled .skin-card {background:rgb(255 255 255 / 75%);border-color:#d9c8e7;color:#302039}
+.popup.is-enabled .skin-card.selected {background:rgb(247 237 255 / 75%);border-color:var(--accent)}
 .popup.is-enabled .popup-footer>span {color:#74617f}
+
+.popup.is-enabled .skin-preview {background:rgb(250 249 253 / 75%)}
+.popup.is-enabled .mini-sidebar {background:rgb(241 239 248 / 75%)}
+.popup.is-enabled .mini-bubble {background:color-mix(in srgb,var(--skin-accent) 9%,transparent)}
