@@ -3,7 +3,7 @@ Ai Site Mask 隐私权政策
 更新日期：2026 年 10 月 18 日
 项目维护者：ctxinf（GitHub）
 项目地址：https://github.com/ctxinf/ai-site-mask
-
+隐私政策地址: https://raw.githubusercontent.com/ctxinf/ai-site-mask/refs/heads/main/webstore/privacy-policy.zh-CN.txt
 1. 适用范围与用途
 
 本政策说明 Ai Site Mask 浏览器扩展如何处理用户数据。本扩展为 ChatGPT、Claude、Grok 和 Gemini 提供 Qwen 或 DeepSeek 风格的界面换肤，保留原网站功能。扩展只提供外观定制，不提供独立的 AI 聊天服务，也不改变用户发送消息的服务提供方。

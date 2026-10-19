@@ -3,9 +3,12 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/ctxinf/ai-site-mask/releases/latest">下载扩展</a> ·
-  <a href="webstore/privacy-policy.zh-CN.txt">隐私政策</a>
+  <a href="https://chromewebstore.google.com/detail/ai-site-mask/nallpeeclphefbfkmijoobdmnjoglhlh"><img src="webstore/chrome.svg" width="32" height="32" alt="Chrome"> Chrome Web Store</a>
+  &nbsp;&nbsp;·&nbsp;&nbsp;
+  <a href="https://microsoftedge.microsoft.com/addons/detail/dfjmfjfjnlhcahbpnkafhchajpjemjpi"><img src="webstore/edge.svg" width="32" height="32" alt="Microsoft Edge"> Edge Add-ons</a>
 </p>
+
+
 
 为 ChatGPT / Claude / Gemini / Grok 换上 Qwen / DeepSeek 外观，保留原生功能，支持皮肤切换与按站点自动应用。
 
