@@ -54,7 +54,13 @@ function OptionsApp() {
   const isSkin = page in SKINS
   const title = page === 'general' ? '通用设置' : isSkin ? SKINS[page as Skin].name : sites.find(s => s.id === page)?.name
   const parent = page === 'general' ? '偏好设置' : isSkin ? '伪装站点' : '原始站点'
-  function navigate(next:Page) { if (!saving) {revision.current++; setPage(next)} }
+  function navigate(next:Page) {
+    if (saving || next === page) return
+    revision.current++
+    // Clear the previous host's state in the same render as the page change.
+    setSite(null)
+    setPage(next)
+  }
 
   return <div className="options-shell">
     <header className="options-header"><Brand/><span className="header-divider">/</span><span>偏好设置</span></header>
