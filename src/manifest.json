@@ -82,7 +82,7 @@
     "128": "images/icon-128.png"
   },
   "name": "Ai Site Mask",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "permissions": [
     "storage",
     "tabs"

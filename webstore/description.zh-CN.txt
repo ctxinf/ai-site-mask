@@ -1,5 +1,7 @@
 用网页版 ChatGPT/Claude/Grok/Gemini，但把界面伪装成 qwen.ai/chat.deepseek.com 的样子。
 
+github: https://github.com/ctxinf/ai-site-mask
+
 Ai Site Mask 为 ChatGPT、Claude、Gemini 和 Grok 提供 Qwen（qwen.ai）与 DeepSeek 风格的界面伪装，同时替换标签页标题和图标；你仍在原网站使用原来的 AI，保留原生功能，随时可以恢复原版外观。
 
 • 四站适配：ChatGPT、Claude、Gemini、Grok。
@@ -8,5 +10,3 @@ Ai Site Mask 为 ChatGPT、Claude、Gemini 和 Grok 提供 Qwen（qwen.ai）与 
 • 开源可查：代码公开，不收集或上传聊天内容，不加入广告和行为追踪；偏好通过浏览器同步存储保存。
 
 Mask 只调整外观，不遮盖对话正文、网址或浏览历史，也不改变原网站的数据处理方式。
-
-源码：https://github.com/ctxinf/ai-site-mask

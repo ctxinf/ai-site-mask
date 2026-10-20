@@ -587,6 +587,29 @@ button {
   font-size:10px;
   color:#b6b0bb;
 }
+.github-link {
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  margin-left:auto;
+  padding:8px 10px;
+  flex-shrink:0;
+  color:inherit;
+  font-size:18px;
+  text-decoration:none;
+}
+.github-link:hover {
+  color:var(--accent);
+  background:#7543f508;
+}
+.github-link svg {
+  flex-shrink:0;
+}
+.github-link:focus-visible {
+  outline:2px solid currentColor;
+  outline-offset:4px;
+  border-radius:2px;
+}
 .options-main {
   padding:34px 42px 38px;
   min-width:0;

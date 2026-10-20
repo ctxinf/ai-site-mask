@@ -2,6 +2,8 @@
   <img src="webstore/promo.zh-CN.source.png" width="800" alt="Ai Site Mask：为 ChatGPT、Claude、Gemini、Grok 换上 Qwen 或 DeepSeek 外观，原生功能保留，一键恢复">
 </p>
 
+为 ChatGPT / Claude / Gemini / Grok 换上 Qwen / DeepSeek 外观，保留原生功能，支持皮肤切换与按站点自动应用。
+
 <p align="center">
   <a href="https://chromewebstore.google.com/detail/ai-site-mask/nallpeeclphefbfkmijoobdmnjoglhlh"><img src="webstore/chrome-download.svg" width="190" height="48" alt="Chrome Web Store · Install"></a>
   &nbsp;&nbsp;
@@ -10,7 +12,11 @@
 
 
 
-为 ChatGPT / Claude / Gemini / Grok 换上 Qwen / DeepSeek 外观，保留原生功能，支持皮肤切换与按站点自动应用。
+
+
+
+![ChatGPT 换上 Qwen 外观，在扩展弹出页切换皮肤与自动应用设置](webstore/popup-screenshot.png)
+
 
 **ChatGPT · Qwen 外观与皮肤切换**
 
