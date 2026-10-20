@@ -1,0 +1,8 @@
+{
+  "extensionName": {
+    "message": "Ai Site Mask"
+  },
+  "extensionDescription": {
+    "message": "将 ChatGPT、Claude 等 AI 网站的界面伪装成 Qwen（qwen.ai 国际站）或 DeepSeek 风格，保留原生功能。"
+  }
+}

@@ -51,7 +51,8 @@
       "run_at": "document_start"
     }
   ],
-  "description": "将 ChatGPT、Claude 等 AI 网站的界面伪装成 Qwen（qwen.ai 国际站）或 DeepSeek 风格，保留原生功能。",
+  "default_locale": "zh_CN",
+  "description": "__MSG_extensionDescription__",
   "firefox:browser_action": {
     "default_icon": {
       "16": "images/icon-16.png",
@@ -81,8 +82,8 @@
     "64": "images/icon-64.png",
     "128": "images/icon-128.png"
   },
-  "name": "Ai Site Mask",
-  "version": "0.0.5",
+  "name": "__MSG_extensionName__",
+  "version": "0.0.6",
   "permissions": [
     "storage",
     "tabs"
