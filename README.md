@@ -15,8 +15,6 @@
 
 
 
-![ChatGPT 换上 Qwen 外观，在扩展弹出页切换皮肤与自动应用设置](webstore/popup-screenshot.png)
-
 
 **ChatGPT · Qwen 外观与皮肤切换**
 
@@ -35,3 +33,8 @@
 **Claude · Qwen 外观**
 
 ![Claude 换上 Qwen 外观，在扩展弹出页管理皮肤](webstore/screenshot-5.png)
+
+
+<p align="center">
+  <img src="webstore/popup-screenshot.png">
+</p>
