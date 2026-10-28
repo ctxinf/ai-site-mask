@@ -15,6 +15,16 @@
   "content_scripts": [
     {
       "js": [
+        "sites/gemini/title-guard.ts"
+      ],
+      "matches": [
+        "https://gemini.google.com/*"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "js": [
         "sites/chatgpt/index.ts"
       ],
       "matches": [
@@ -83,7 +93,7 @@
     "128": "images/icon-128.png"
   },
   "name": "__MSG_extensionName__",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "permissions": [
     "storage",
     "tabs"

@@ -71,8 +71,17 @@ html.skm-mask-on .text-input-field {
 html.skm-mask-on :is(.ql-editor, .query-text, .markdown) { color: ${text} !important; }
 html.skm-mask-on .ql-editor.ql-blank::before { color: ${secondary} !important; }
 html.skm-mask-on .user-query-bubble-with-background {
+  --gem-sys-color--surface-container-high: ${bubble};
+  --lumi-sys-color--surface-container: ${bubble};
   background: ${bubble} !important; color: ${text} !important; border-radius: 18px !important;
 }
+/* The collapsed-query fade otherwise keeps Gemini's native dark endpoint. */
+html.skm-mask-on .user-query-bubble-with-background *,
+html.skm-mask-on .user-query-bubble-with-background *::before,
+html.skm-mask-on .user-query-bubble-with-background *::after { background-image: none !important; }
+html.skm-mask-on .user-query-bubble-with-background .query-text { background: transparent !important; }
+html.skm-mask-on .user-query-bubble-with-background button { background-color: ${bubble} !important; }
+html.skm-mask-on .user-query-bubble-with-background :is(.expand-button, .collapse-button) { background: ${bubble} !important; }
 html.skm-mask-on model-response .markdown { font-size: 15px; line-height: 1.75; }
 html.skm-mask-on model-response .response-container { background: transparent !important; }
 html.skm-mask-on model-response code-block { border-radius: 12px; overflow: clip; }

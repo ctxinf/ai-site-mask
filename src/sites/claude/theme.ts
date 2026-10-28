@@ -14,7 +14,7 @@ export function claudeThemeCss(theme?: string): string {
   const palette = (deep ? deepseekPaletteCss : qwenPaletteCss)
     .replaceAll('html.skm-mask-on.dark', 'html.skm-mask-on[data-mode="dark"]')
   const tokens: Record<string, string> = {
-    'cds-page-bg': page, 'cds-surface-0': sidebar, 'cds-surface-1': page,
+    'cds-bg-user-message': bubble, 'cds-page-bg': page, 'cds-surface-0': sidebar, 'cds-surface-1': page,
     'cds-surface-2': sidebar, 'cds-surface-3': composer,
     'cds-surface-panel': sidebar, 'cds-surface-popover': composer,
     'cds-text-primary': text, 'cds-text-secondary': secondary, 'cds-text-muted': muted,
@@ -72,6 +72,22 @@ html.skm-mask-on [data-cds="ChatComposer"] > .rounded-composer {
 html.skm-mask-on [data-cds="ChatComposer"] > .rounded-composer:focus-within {
   border-color: ${accent};
 }
+html.skm-mask-on :is([data-composer-card-holder], [data-cds="ChatComposer"]) { background-color: ${page} !important; }
+html.skm-mask-on [data-cds="ChatComposer"] button:not([data-testid="chat-input-send"]) {
+  opacity: var(--skm-extra-opacity); transition: opacity .15s;
+}
+html.skm-mask-on [data-cds="ChatComposer"] button:not([data-testid="chat-input-send"]):is(:hover,:focus-visible,[aria-expanded="true"]) { opacity: 1; }
+html.skm-mask-on [data-cds="UserMessage"], html.skm-mask-on [data-testid="user-message"] { background: transparent !important; }
+/* These backing panels appear when the dock masks an unscrolled transcript.
+   Their local CDS page token can differ from the root theme token. */
+html.skm-mask-on [data-testid^="transcript-bottom-backing"] {
+  background: ${page} !important;
+}
+/* CSS also applies when Claude mounts the prompt categories asynchronously. */
+html.skm-mask-on [aria-label="Prompt categories"] {
+  opacity: var(--skm-extra-opacity); transition: opacity .15s;
+}
+html.skm-mask-on [aria-label="Prompt categories"]:is(:hover,:focus-within) { opacity: 1; }
 html.skm-mask-on [data-cds="ChatComposerEditor"] { color: ${text}; }
 html.skm-mask-on [data-composer-placeholder] { color: ${muted}; }
 html.skm-mask-on [data-testid="chat-input-send"] {
@@ -86,7 +102,7 @@ html.skm-mask-on [data-cds="ChatComposer"] :is(button[aria-label="Dictate"],butt
   opacity: var(--skm-extra-opacity); transition: opacity .15s;
 }
 html.skm-mask-on [data-cds="ChatComposer"] :is(button[aria-label="Dictate"],button[aria-label="Use voice mode"],[aria-label="Surface"]):is(:hover,:focus-within,[aria-expanded="true"]) { opacity: 1; }
-html.skm-mask-on :is([data-testid="user-message"],[data-cds="UserMessage"]) {
+html.skm-mask-on [data-cds="UserMessage"] > div:first-child {
   background: ${bubble} !important; color: ${text}; border-radius: 18px !important;
 }
 html.skm-mask-on :is(.font-claude-response,[data-cds="AssistantMessage"]) {
@@ -100,6 +116,11 @@ html.skm-mask-on main .font-display.text-balance::after {
   content: '${deep ? '你好，让我们开始聊天吧' : '有什么可以帮你的吗？'}';
   font-size: clamp(23px, 3vw, 30px); font-weight: ${deep ? '600' : '400'}; color: ${text};
 }
+html.skm-mask-on :is([data-testid="tab-switch"], [data-cds="ChatComposer"] [role="radiogroup"], [data-testid="chat-actions"] button[aria-haspopup="dialog"], button[aria-label="Share"], button[aria-label="分享"]) {
+  opacity: var(--skm-extra-opacity); transition: opacity .15s;
+}
+html.skm-mask-on :is([data-testid="tab-switch"], [data-cds="ChatComposer"] [role="radiogroup"], [data-testid="chat-actions"] button[aria-haspopup="dialog"], button[aria-label="Share"], button[aria-label="分享"]):is(:hover,:focus-within,[aria-expanded="true"]) { opacity: 1; }
+html.skm-mask-on [data-testid="chat-actions"] [data-cds-disabled-reason-wrapper]:is(:hover,:focus-within) button[aria-haspopup="dialog"] { opacity: 1; }
 @media (max-width: 640px) {
   html.skm-mask-on [data-cds="ChatComposer"] > .rounded-composer { padding: 10px; }
 }

@@ -272,6 +272,11 @@ html.skm-mask-on :is(
   html.skm-mask-on :is(.sidebar-item, [data-app-shell-titlebar] [role="group"], [class~="group/home-suggestion-list-item"]) { transition: none; }
 }
 
+/* Thread mode animates a native single-line height; our two-row grid needs
+   intrinsic height after sending as well as on the home screen. */
+html.skm-mask-on [data-composer-body]:not(:has([data-expanded-composer])) {
+  height: auto !important; min-height: 126px !important;
+}
 /* DeepSeek layout: roomy editor above a compact native action row. */
 html.skm-mask-on [data-composer-footer-responsive] {
   display: grid !important;
@@ -280,12 +285,12 @@ html.skm-mask-on [data-composer-footer-responsive] {
   gap: 10px 8px !important;
   padding: 14px 12px 12px !important;
 }
-html.skm-mask-on [data-composer-footer-responsive] > :nth-child(2) {
+html.skm-mask-on [data-composer-footer-responsive] > :has([data-composer-input]) {
   grid-column: 1 / -1 !important;
   grid-row: 1 !important;
   margin: 0 !important;
 }
-html.skm-mask-on [data-composer-footer-responsive] > :first-child {
+html.skm-mask-on [data-composer-footer-responsive] > :has([data-composer-navigation-target="add-context"]):not(:has([data-composer-input])) {
   grid-column: 1 !important; grid-row: 2 !important; align-self: end;
 }
 html.skm-mask-on [data-composer-footer-responsive] > :last-child {
@@ -293,7 +298,11 @@ html.skm-mask-on [data-composer-footer-responsive] > :last-child {
 }
 html.skm-mask-on [data-composer-input] { padding: 0 !important; }
 html.skm-mask-on [data-composer-input-layout] {
-  height: auto !important; min-height: 56px !important; max-height: 240px; overflow-y: auto !important;
+  height: auto !important; min-height: 56px !important; align-content: start !important; margin-block: 0 !important; max-height: 240px; overflow-y: auto !important;
+}
+html.skm-mask-on [data-composer-markdown] p { margin-block: 0 !important; }
+html.skm-mask-on [data-composer-input-layout] > [data-composer-markdown] {
+  flex: 1 1 auto !important; height: auto !important; min-height: 56px !important; align-self: flex-start !important;
 }
 html.skm-mask-on [data-composer-markdown] {
   min-height: 56px !important; height: auto !important; padding: 2px 3px !important;
