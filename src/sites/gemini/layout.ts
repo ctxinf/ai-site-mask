@@ -5,6 +5,10 @@ export function geminiLayoutCss(deepseek: boolean): string {
   return `
 /* Native sidebar sizing/collapse remains under Gemini's control. */
 html.skm-mask-on :is(bard-sidenav,mat-sidenav) { border-inline-end: 1px solid ${deepseek ? 'var(--skm-g-border)' : 'transparent'}; }
+${deepseek ? `html.skm-mask-on :is(bard-sidenav,mat-sidenav).collapsed,
+html.skm-mask-on :is(bard-sidenav,mat-sidenav).collapsed side-navigation-content {
+  background: transparent !important; border-inline-end-color: transparent !important; box-shadow: none !important;
+}` : ''}
 html.skm-mask-on :is(bard-sidenav,mat-sidenav) .gem-nav-list-item { border-radius: 10px !important; }
 html.skm-mask-on :is(bard-sidenav,mat-sidenav) .gem-nav-list-item:hover { background: var(--skm-g-hover) !important; }
 html.skm-mask-on :is(bard-sidenav,mat-sidenav) [data-skm-gemini-history] { min-height: 36px; font-size: 14px; }
@@ -66,28 +70,39 @@ html.skm-mask-on input-container .input-area-container {
 html.skm-mask-on input-area-v2 .text-input-field {
   background: var(--skm-g-composer) !important; border: 1px solid var(--skm-g-border) !important;
   border-radius: ${deepseek ? '26px' : '30px'} !important; box-shadow: none !important;
-  min-width: 0; overflow: visible; padding: ${deepseek ? '16px 12px 10px' : '10px 12px'} !important;
-  grid-template-columns: ${deepseek ? 'minmax(0, 1fr) auto auto' : '40px minmax(0, 1fr) auto'} !important;
-  grid-template-rows: ${deepseek ? 'minmax(60px, auto) auto' : 'auto'} !important;
-  gap: ${deepseek ? '10px 6px' : '0 8px'} !important;
+  min-width: 0; overflow: visible;
+  ${deepseek ? `padding: 14px 14px 10px !important; display: grid !important;
+  grid-template-areas: "file-preview file-preview file-preview" "text-input text-input text-input" "toggles leading-actions trailing-actions" !important;
+  grid-template-columns: minmax(0, 1fr) max-content auto !important;
+  grid-template-rows: auto minmax(60px, auto) auto !important;
+  row-gap: 0 !important; column-gap: 6px !important;` : ''}
 }
-html.skm-mask-on input-area-v2 :is(.single-line-format,.multi-line-format) {
-  grid-column: ${deepseek ? '1 / -1' : '2'} !important; grid-row: 1 !important;
-  min-width: 0; margin: 0 !important;
+${deepseek ? `html.skm-mask-on input-area-v2 .attachment-preview-wrapper {
+  grid-area: file-preview !important; margin-bottom: 8px;
+}
+html.skm-mask-on input-area-v2 :is(.text-input-field_textarea-wrapper,.single-line-format,.multi-line-format) {
+  grid-area: text-input !important;
+  min-width: 0; margin-block: 0 10px !important; margin-inline-start: 0 !important; padding-block: 0 !important; padding-inline: 2px !important;
 }
 html.skm-mask-on input-area-v2 .leading-actions-wrapper {
-  grid-column: ${deepseek ? '2' : '1'} !important; grid-row: ${deepseek ? '2' : '1'} !important;
-  align-self: end; margin: 0 !important;
+  grid-area: leading-actions !important;
+  container-type: normal !important;
+  align-self: center !important; align-items: center !important;
+  min-height: 36px; margin: 0 !important; width: auto !important;
+}
+html.skm-mask-on input-area-v2 .leading-actions-wrapper > * {
+  flex-shrink: 0; min-width: max-content;
 }
 html.skm-mask-on input-area-v2 .trailing-actions-wrapper {
-  grid-column: 3 !important; grid-row: ${deepseek ? '2' : '1'} !important;
-  align-self: end; margin: 0 !important; min-width: 0;
-}
+  grid-area: trailing-actions !important;
+  align-self: center !important; align-items: center !important;
+  min-height: 36px; margin: 0 !important; min-width: 0;
+}` : ''}
 html.skm-mask-on [data-skm-gemini-editor] {
   color: var(--skm-g-text) !important; caret-color: var(--skm-g-accent);
   font-size: 16px !important; line-height: 24px !important;
-  min-height: ${deepseek ? '60px' : '32px'} !important; max-height: 240px; overflow-y: auto;
-  padding: ${deepseek ? '2px 4px' : '4px 0'} !important;
+  ${deepseek ? 'min-height: 60px !important; padding: 2px 4px !important;' : ''}
+  max-height: 240px; overflow-y: auto;
 }
 html.skm-mask-on [data-skm-gemini-editor].ql-blank::before {
   content: '${deepseek ? '给 DeepSeek 发送消息' : '有什么我能帮你的吗？'}' !important;
@@ -100,7 +115,7 @@ html.skm-mask-on input-area-v2 :is(button[aria-label="Send message"],button[aria
 html.skm-mask-on input-area-v2 :is(button[aria-label="Send message"],button[aria-label="发送消息"],button[aria-label="发送"]):disabled { opacity: .4 !important; }
 html.skm-mask-on input-area-v2 :is(button[aria-label="Send message"],button[aria-label="发送消息"],button[aria-label="发送"]):not(:disabled):hover { filter: brightness(.94); }
 html.skm-mask-on .skm-gemini-toggles {
-  grid-column: 1; grid-row: 2; display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  grid-area: toggles !important; display: flex; align-items: center; align-self: center; flex-wrap: wrap; gap: 8px;
 }
 html.skm-mask-on .skm-gemini-toggle {
   display: inline-flex; align-items: center; gap: 5px; min-height: 34px; padding: 0 10px;
