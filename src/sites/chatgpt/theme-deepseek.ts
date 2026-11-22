@@ -183,12 +183,19 @@ html.skm-mask-on {
   --color-background-user-message: var(--skm-user-bubble) !important;
   --user-message-text-color: var(--skm-text) !important;
 }
-html.skm-mask-on :is(aside.app-shell-left-panel, #app-shell-sidebar, [data-app-shell-header-slot="start"]) {
+html.skm-mask-on :is(aside.app-shell-left-panel, #app-shell-sidebar, [data-app-navigation-rail], [data-slate-sidebar-content]) {
   --color-surface: var(--skm-sidebar) !important;
   background: var(--skm-sidebar) !important;
 }
-html.skm-mask-on [data-app-navigation-rail] {
+html.skm-mask-on [data-app-shell-sidebar-open="false"] :is(aside.app-shell-left-panel, #app-shell-sidebar, [data-app-navigation-rail]) {
+  --color-surface: var(--skm-page) !important;
   background: var(--skm-page) !important;
+}
+html.skm-mask-on [data-app-navigation-rail] > .border-e-hairline {
+  opacity: 0 !important;
+}
+html.skm-mask-on [data-app-shell-header-slot="start"] {
+  background: transparent !important;
 }
 /* Replace only decoration inside native brand and expand buttons. */
 html.skm-mask-on button:is([aria-label*="当前模式：ChatGPT"], [aria-label*="current mode: ChatGPT" i]) > span > span:first-child {
@@ -204,10 +211,27 @@ html.skm-mask-on button:is([aria-label*="当前模式：ChatGPT"], [aria-label*=
   height: 23px;
   background: url("${deepseekLogoUrl}") center / contain no-repeat;
 }
-html.skm-mask-on [data-app-navigation-rail] [data-app-shell-sidebar-trigger] {
-  background: url("${deepseekIconUrl}") center / 28px 22px no-repeat !important;
+html.skm-mask-on #app-shell-sidebar [data-slate-sidebar-content] nav[role="navigation"] > div:first-child a[href="/"] {
+  font-size: 0 !important;
 }
-html.skm-mask-on [data-app-navigation-rail] [data-app-shell-sidebar-trigger] > span {
+html.skm-mask-on #app-shell-sidebar [data-slate-sidebar-content] nav[role="navigation"] > div:first-child a[href="/"] > * {
+  display: none !important;
+}
+html.skm-mask-on #app-shell-sidebar [data-slate-sidebar-content] nav[role="navigation"] > div:first-child a[href="/"]::after {
+  content: "";
+  display: inline-block;
+  width: 120px;
+  height: 22px;
+  background: url("${deepseekLogoUrl}") left center / contain no-repeat;
+}
+html.skm-mask-on [data-app-navigation-rail] :is([data-app-shell-sidebar-trigger], button[data-sidebar-destination="builtin:home"]) {
+  opacity: 1 !important;
+  background: url("${deepseekIconUrl}") center / 26px 20px no-repeat !important;
+}
+html.skm-mask-on [data-app-navigation-rail] button[data-sidebar-destination="builtin:home"]:not(:hover)::before {
+  background: transparent !important;
+}
+html.skm-mask-on [data-app-navigation-rail] :is([data-app-shell-sidebar-trigger], button[data-sidebar-destination="builtin:home"]) > span {
   opacity: 0 !important;
 }
 html.skm-mask-on main:has([data-composer-placement="home"]) h1:not(article *):not(.markdown *) {
@@ -253,7 +277,12 @@ html.skm-mask-on :is(
   [data-app-shell-titlebar] [role="group"],
   [class~="group/home-suggestion-list-item"],
   [data-app-navigation-rail] .sidebar-item:not(:has([aria-label*="个人资料"], [aria-label*="profile" i])):not([aria-label="新聊天"]):not([aria-label="搜索"]):not([aria-label="New chat" i]):not([aria-label="Search" i]),
-  #app-shell-sidebar [data-sidebar-destination],
+  [data-app-navigation-rail] button:not([data-sidebar-destination="builtin:home"]):not([data-app-shell-sidebar-trigger]):not([aria-label*="个人资料"]):not([aria-label*="profile" i]),
+  [data-app-shell-sidebar-open="false"] [data-app-navigation-rail] button:is([aria-label*="个人资料"], [aria-label*="profile" i]),
+  [data-app-navigation-rail] [data-appearance="plain"] [role="separator"],
+  [data-app-navigation-rail] [data-appearance="plain"] hr,
+  [data-app-navigation-rail] [data-appearance="plain"] .border-t,
+  #app-shell-sidebar [data-sidebar-destination]:not([data-sidebar-destination="builtin:home"]),
   [data-app-shell-titlebar] button[aria-label="更多"],
   [data-app-shell-titlebar] button[aria-label="More" i]
 ) {
@@ -264,6 +293,7 @@ html.skm-mask-on :is(
   [data-app-shell-titlebar] [role="group"],
   [class~="group/home-suggestion-list-item"],
   [data-app-navigation-rail] .sidebar-item,
+  [data-app-navigation-rail] button,
   #app-shell-sidebar [data-sidebar-destination],
   [data-app-shell-titlebar] button[aria-label="更多"],
   [data-app-shell-titlebar] button[aria-label="More" i]
@@ -283,6 +313,7 @@ html.skm-mask-on [data-composer-footer-responsive] {
   grid-template-columns: minmax(0, 1fr) auto !important;
   grid-template-rows: minmax(56px, auto) auto !important;
   gap: 10px 8px !important;
+  margin: 0 !important;
   padding: 14px 12px 12px !important;
 }
 html.skm-mask-on [data-composer-footer-responsive] > :has([data-composer-input]) {
@@ -298,6 +329,7 @@ html.skm-mask-on [data-composer-footer-responsive] > :last-child {
 }
 html.skm-mask-on [data-composer-input] { padding: 0 !important; }
 html.skm-mask-on [data-composer-input-layout] {
+  padding: 0 40px 0 0 !important;
   height: auto !important; min-height: 56px !important; align-content: start !important; margin-block: 0 !important; max-height: 240px; overflow-y: auto !important;
 }
 html.skm-mask-on [data-composer-markdown] p { margin-block: 0 !important; }
@@ -354,8 +386,12 @@ html.skm-mask-on nav:not([data-app-navigation-rail]) > div:first-child button.si
 html.skm-mask-on .skm-deepseek-fold { margin: 0 10px; color: var(--skm-text-3); font-size: 13px; }
 html.skm-mask-on .skm-deepseek-fold summary { padding: 7px 4px; cursor: pointer; border-radius: 6px; }
 html.skm-mask-on .skm-deepseek-fold summary:hover { background: var(--skm-hover); }
-html.skm-mask-on [data-skm-folded="true"] { display: none !important; }
+html.skm-mask-on [data-skm-folded="true"],
+html.skm-mask-on [data-app-action-sidebar-scroll] div:not(.contents):has(> [data-skm-folded="true"]) { display: none !important; }
 html.skm-mask-on [data-skm-folded="false"] [data-sidebar-destination] { opacity: 1 !important; }
+html.skm-mask-on [data-app-shell-main-titlebar]:has(> .skm-deepseek-chat-title) > [data-app-shell-page-header]:not(:has([role="group"])) {
+  display: none !important;
+}
 html.skm-mask-on .skm-deepseek-chat-title {
   pointer-events: auto; max-width: min(48vw, 440px); min-width: 0; overflow: hidden;
   text-overflow: ellipsis; white-space: nowrap; border: 0; border-radius: 5px;
@@ -367,10 +403,16 @@ html.skm-mask-on .skm-deepseek-title-input {
   width: min(40vw, 340px); background: var(--skm-composer); color: var(--skm-text);
   border: 1px solid var(--skm-blue); border-radius: 4px; padding: 2px 6px; font: inherit;
 }
-html.skm-mask-on [data-app-shell-titlebar] button:is([aria-label*="临时"], [aria-label*="temporary" i]) {
+html.skm-mask-on :is(
+  [data-app-shell-titlebar] button:is([aria-label*="临时"], [aria-label*="temporary" i]),
+  [data-app-shell-floating-page-actions] div:has(> button:is([aria-label*="临时"], [aria-label*="temporary" i])) > button[aria-haspopup="menu"]
+) {
   opacity: 0 !important; transition: opacity 150ms ease;
 }
-html.skm-mask-on [data-app-shell-titlebar] button:is([aria-label*="临时"], [aria-label*="temporary" i]):is(:hover, :focus-visible, [data-state="open"]) { opacity: 1 !important; }
+html.skm-mask-on :is(
+  [data-app-shell-titlebar] button:is([aria-label*="临时"], [aria-label*="temporary" i]),
+  [data-app-shell-floating-page-actions] div:has(> button:is([aria-label*="临时"], [aria-label*="temporary" i])) > button[aria-haspopup="menu"]
+):is(:hover, :focus-visible, [data-state="open"]) { opacity: 1 !important; }
 
 html.skm-mask-on { --skm-share-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%3E%3Cpath%20d%3D%22M7.95889%201.52285C7.95888%200.826234%208.76055%200.467983%209.27669%200.875208L9.37524%200.967191L15.1317%207.18358C15.5582%207.64419%2015.5582%208.35614%2015.1317%208.81676L9.37524%2015.0331C8.87034%2015.578%207.95888%2015.2205%207.95889%2014.4775V10.8207C7.10614%2010.8432%206.31361%2010.9316%205.45468%2011.2515C4.39484%2011.6463%203.18248%2012.413%201.64676%2013.9425C1.4533%2014.135%201.18329%2014.1696%200.969086%2014.0908C0.74748%2014.0091%200.547307%2013.7879%200.54859%2013.4844L0.55516%2013.1315C0.618924%2011.3494%201.11153%209.29838%202.27656%207.63787C3.45289%205.96147%205.29554%204.71635%207.95889%204.54797V1.52285ZM9.20911%205.13366C9.20899%205.50567%208.9031%205.77687%208.56523%205.77755C5.99383%205.78282%204.33736%206.8762%203.29964%208.35496C2.54519%209.43014%202.10739%2010.7283%201.9152%2011.9939C3.04749%2011.0323%204.0569%2010.4385%205.01917%2010.0801C6.29638%209.60449%207.4406%209.56343%208.56429%209.56295C8.9178%209.5628%209.20894%209.84909%209.20911%2010.2068L9.20817%2013.3737L14.1837%208.00017L9.20817%202.62571L9.20911%205.13366Z%22/%3E%3C/svg%3E"); }
 /* A single quiet disclosure controls all optional sidebar sections. */

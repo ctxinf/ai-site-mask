@@ -98,14 +98,18 @@ html.skm-mask-on body {
 }
 html.skm-mask-on main { background-color: var(--skm-qwen-page) !important; }
 html.skm-mask-on aside.app-shell-left-panel,
-html.skm-mask-on [data-app-shell-header-slot="start"],
 html.skm-mask-on #app-shell-sidebar,
+html.skm-mask-on [data-app-navigation-rail],
+html.skm-mask-on [data-slate-sidebar-content],
 html.skm-mask-on #stage-slideover-sidebar,
 html.skm-mask-on nav[aria-label="Chat history"],
 html.skm-mask-on nav[aria-label="聊天记录"] {
   --color-surface: var(--skm-qwen-sidebar) !important;
   background: var(--skm-qwen-sidebar) !important;
   color: var(--skm-qwen-text) !important;
+}
+html.skm-mask-on [data-app-shell-header-slot="start"] {
+  background: transparent !important;
 }
 
 @media (min-width: 1024px) {
@@ -149,6 +153,19 @@ html.skm-mask-on button[aria-label*="current mode: ChatGPT" i] > span > span:fir
   font-weight: 650;
   letter-spacing: -0.8px;
   color: var(--skm-qwen-text);
+}
+html.skm-mask-on #app-shell-sidebar [data-slate-sidebar-content] nav[role="navigation"] > div:first-child a[href="/"] {
+  font-size: 0 !important;
+}
+html.skm-mask-on #app-shell-sidebar [data-slate-sidebar-content] nav[role="navigation"] > div:first-child a[href="/"] > * {
+  display: none !important;
+}
+html.skm-mask-on #app-shell-sidebar [data-slate-sidebar-content] nav[role="navigation"] > div:first-child a[href="/"]::after {
+  content: "";
+  display: inline-block;
+  width: 75px;
+  height: 20px;
+  background: var(--skm-qwen-logo) left center / contain no-repeat;
 }
 /* A greeting is decoration; message headings and their SVGs are never targeted. */
 html.skm-mask-on main:has([data-composer-placement="home"]) h1:not(article *):not([data-message-author-role] *):not(.markdown *) {
@@ -232,11 +249,14 @@ html.skm-mask-on [data-app-shell-titlebar] [role="group"][aria-label="撰写器�
 }
 /* Extra ChatGPT features keep their native position and hit targets. */
 html.skm-mask-on [data-app-shell-titlebar] [role="group"][aria-label="撰写器模式"],
+html.skm-mask-on [data-app-navigation-rail] button:not([data-sidebar-destination="builtin:home"]):not([data-app-shell-sidebar-trigger]):not([aria-label*="个人资料"]):not([aria-label*="profile" i]),
+html.skm-mask-on [data-app-navigation-rail] [data-appearance="plain"] .border-t,
 html.skm-mask-on main:has([data-composer-placement="home"]) [class~="group/home-suggestion-list-item"] {
   opacity: var(--skm-extra-opacity, .25) !important;
   transition: opacity 150ms ease;
 }
 html.skm-mask-on [data-app-shell-titlebar] [role="group"][aria-label="撰写器模式"]:is(:hover, :focus-within),
+html.skm-mask-on [data-app-navigation-rail] button:is(:hover, :focus-within, [data-state="open"]),
 html.skm-mask-on main:has([data-composer-placement="home"]) [class~="group/home-suggestion-list-item"]:is(:hover, :focus-within),
 html.skm-mask-on #app-shell-sidebar .sidebar-item:is(:hover, :focus-within) {
   opacity: 1 !important;
@@ -331,11 +351,17 @@ html.skm-mask-on [data-app-shell-main-titlebar]::before {
 html.skm-mask-on [data-app-shell-titlebar] div:has(> button:is([aria-label="分享"], [aria-label="Share" i])) {
   background: transparent !important;
 }
-html.skm-mask-on [data-app-shell-titlebar] button:is([aria-label="分享"], [aria-label="Share" i]) {
+html.skm-mask-on :is(
+  [data-app-shell-titlebar] button:is([aria-label="分享"], [aria-label="Share" i]),
+  [data-app-shell-floating-page-actions] div:has(> button:is([aria-label*="临时"], [aria-label*="temporary" i])) > button[aria-haspopup="menu"]
+) {
   opacity: 0 !important;
   transition: opacity 150ms ease;
 }
-html.skm-mask-on [data-app-shell-titlebar] button:is([aria-label="分享"], [aria-label="Share" i]):is(:hover, :focus-visible, [data-state="open"]) {
+html.skm-mask-on :is(
+  [data-app-shell-titlebar] button:is([aria-label="分享"], [aria-label="Share" i]),
+  [data-app-shell-floating-page-actions] div:has(> button:is([aria-label*="临时"], [aria-label*="temporary" i])) > button[aria-haspopup="menu"]
+):is(:hover, :focus-visible, [data-state="open"]) {
   opacity: 1 !important;
 }
 html.skm-mask-on ::selection { background: var(--skm-qwen-selection); }
@@ -346,14 +372,14 @@ html.skm-mask-on main [data-markdown-copy="exclude"].text-center.text-pretty.tex
   display: none !important;
 }
 
-/* Keep the native expand action, replacing only its decorative icon. */
-html.skm-mask-on [data-app-navigation-rail] [data-app-shell-sidebar-trigger] {
+/* Keep the native expand/home action, replacing only its decorative icon. */
+html.skm-mask-on [data-app-navigation-rail] :is([data-app-shell-sidebar-trigger], button[data-sidebar-destination="builtin:home"]) {
   position: relative;
 }
-html.skm-mask-on [data-app-navigation-rail] [data-app-shell-sidebar-trigger] > span {
+html.skm-mask-on [data-app-navigation-rail] :is([data-app-shell-sidebar-trigger], button[data-sidebar-destination="builtin:home"]) > span {
   opacity: 0 !important;
 }
-html.skm-mask-on [data-app-navigation-rail] [data-app-shell-sidebar-trigger]::after {
+html.skm-mask-on [data-app-navigation-rail] :is([data-app-shell-sidebar-trigger], button[data-sidebar-destination="builtin:home"])::after {
   content: "";
   position: absolute;
   width: 20px;
