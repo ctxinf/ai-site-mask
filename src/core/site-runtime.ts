@@ -1,5 +1,6 @@
 import {SKINS, resolveSkin, type SiteId} from './catalog'
 import {MaskEngine, type CssProvider} from './mask'
+import {resolveFaviconUrl} from './storage'
 
 type Cleanup = () => void
 interface SiteAdapter {
@@ -16,7 +17,7 @@ export function defineSite(adapter: SiteAdapter): () => Cleanup {
       isApplicable: adapter.isApplicable,
       forceLight: () => false,
       getTitle: theme => SKINS[resolveSkin(theme)].title,
-      getFavicon: theme => chrome.runtime.getURL(SKINS[resolveSkin(theme)].favicon),
+      getFavicon: (theme, faviconId) => resolveFaviconUrl(resolveSkin(theme), faviconId),
     })
     const cleanupUi = adapter.mountUi?.()
     engine.boot(location.hostname).catch(error => console.error(`[skm][${adapter.id}] boot 失败:`, error))

@@ -8,7 +8,7 @@ export interface MaskEngineOptions {
   isApplicable?: () => boolean
   forceLight?: (theme?: string) => boolean
   getTitle?: (theme?: string) => string | undefined
-  getFavicon?: (theme?: string) => string | undefined
+  getFavicon?: (theme?: string, faviconId?: string) => string | undefined | Promise<string | undefined>
 }
 
 // Mask 换肤引擎：负责 <style> 注入/移除 + html 开关 class + 标题与 Favicon 伪装 + 深色模式中和。
@@ -20,6 +20,7 @@ export class MaskEngine {
   private unsubscribe: (() => void) | null = null
   private booted = false
   private generation = 0
+  private faviconGeneration = 0
   private documentObserver: MutationObserver | null = null
   private cancelDocumentReady: (() => void) | null = null
   private enabled = false
@@ -28,7 +29,7 @@ export class MaskEngine {
   private classObserver: MutationObserver | null = null
   private forceLight = true
   private routeTimer: ReturnType<typeof setInterval> | null = null
-  private requestedStyle: [string | undefined, number, string | undefined] | null = null
+  private requestedStyle: [string | undefined, number, string | undefined, string | undefined] | null = null
 
   constructor(
     private readonly siteId: string,
@@ -49,8 +50,8 @@ export class MaskEngine {
   }
 
   /** 注入（或复用）style 标签并挂上开关 class；幂等。 */
-  apply(theme?: string, extraOpacity = 0.25, qwenModelLabel?: string): void {
-    this.requestedStyle = [theme, extraOpacity, qwenModelLabel]
+  apply(theme?: string, extraOpacity = 0.25, qwenModelLabel?: string, faviconId?: string): void {
+    this.requestedStyle = [theme, extraOpacity, qwenModelLabel, faviconId]
     if (this.options?.isApplicable && !this.options.isApplicable()) {
       this.remove()
       return
@@ -96,11 +97,25 @@ export class MaskEngine {
       })
     }
 
-    this.identity.apply(this.options?.getTitle?.(theme), this.options?.getFavicon?.(theme))
+    const title = this.options?.getTitle?.(theme)
+    this.identity.applyTitle(title)
+
+    const faviconGen = ++this.faviconGeneration
+    const faviconResult = this.options?.getFavicon?.(theme, faviconId)
+    if (faviconResult && typeof (faviconResult as Promise<string | undefined>).then === 'function') {
+      ;(faviconResult as Promise<string | undefined>).then(url => {
+        if (faviconGen !== this.faviconGeneration) return
+        if (!document.documentElement?.classList.contains('skm-mask-on')) return
+        this.identity.applyFavicon(url)
+      }).catch(() => {})
+    } else {
+      this.identity.applyFavicon(faviconResult as string | undefined)
+    }
   }
 
   /** 移除开关 class 和 style 标签；恢复标题和 Favicon；还原深色模式；幂等。 */
   remove(): void {
+    this.faviconGeneration++
     document.documentElement?.classList.remove('skm-mask-on')
     this.styleEl?.remove()
     this.classObserver?.disconnect()
@@ -149,7 +164,7 @@ export class MaskEngine {
     this.cancelDocumentReady = null
     this.enabled = state.autoApply
     if (this.enabled) {
-      this.apply(state.theme, state.extraOpacity, state.qwenModelLabel)
+      this.apply(state.theme, state.extraOpacity, state.qwenModelLabel, state.faviconId)
     }
 
     // Content scripts run in an isolated world: polling the URL also catches
@@ -170,7 +185,7 @@ export class MaskEngine {
         getSiteState(host).then(next => {
           if (generation !== this.generation) { respond({error: '页面已卸载'}); return }
           this.enabled = message.enabled
-          if (this.enabled) this.apply(next.theme, next.extraOpacity, next.qwenModelLabel)
+          if (this.enabled) this.apply(next.theme, next.extraOpacity, next.qwenModelLabel, next.faviconId)
           else {
             this.requestedStyle = null
             this.remove()
@@ -182,7 +197,7 @@ export class MaskEngine {
     }
     chrome.runtime.onMessage.addListener(this.messageListener)
     this.unsubscribe = onSiteStateChange(host, (next) => {
-      if (this.enabled) this.apply(next.theme, next.extraOpacity, next.qwenModelLabel)
+      if (this.enabled) this.apply(next.theme, next.extraOpacity, next.qwenModelLabel, next.faviconId)
     })
   }
 

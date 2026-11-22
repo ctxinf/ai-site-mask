@@ -1,3 +1,6 @@
+import type {Skin} from './catalog'
+export {normalizeFaviconId} from './favicons'
+
 export const DEFAULT_DEEPSEEK_USERNAME = '133****3333'
 export function normalizeDeepseekUsername(value?: string): string {
   return (typeof value === 'string' ? value : '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 40) || DEFAULT_DEEPSEEK_USERNAME
@@ -8,6 +11,12 @@ export function normalizeQwenModelLabel(value?: string): string {
   return (typeof value === 'string' ? value : '').replace(/[\u0000-\u001f\u007f]/g, ' ').trim().slice(0, 80) || DEFAULT_QWEN_MODEL_LABEL
 }
 
+export interface SiteSkinSettings {
+  qwenModelLabel?: string
+  deepseekUsername?: string
+  faviconId?: string
+}
+
 export interface SiteState {
   autoApply: boolean
   /** 当前站点选择的伪装皮肤。 */
@@ -16,6 +25,10 @@ export interface SiteState {
   extraOpacity?: number
   deepseekUsername?: string
   qwenModelLabel?: string
+  /** 按伪装皮肤区分的二元组设置（原始站点 × 伪装皮肤）。 */
+  skins?: Partial<Record<Skin, SiteSkinSettings>>
+  /** 当前生效皮肤解析后的 faviconId（空表示使用皮肤默认图标）。 */
+  faviconId?: string
 }
 
 export interface Preferences {
