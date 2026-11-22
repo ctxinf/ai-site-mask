@@ -83,7 +83,7 @@ export default function PopupApp() {
   return <main className={`popup ${enabled ? 'is-enabled' : ''}`}>
     <header className="popup-header"><div className="popup-brand-site"><Brand/><span className="popup-site-icon" role="img" aria-label={currentSite?.name ?? (host || '当前页面')} title={currentSite ? host : `${host || '当前页面'} · 非目标网站`}>
       {currentSite ? <SiteIcon site={currentSite.id}/> : favicon ? <img src={favicon} alt="" onError={() => setFavicon('')}/> : <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9"/><ellipse cx="12" cy="12" rx="4" ry="9"/><path d="M3 12h18M5 6.5h14M5 17.5h14"/></svg>}
-      </span></div><button type="button" className="popup-settings-btn" aria-label="打开偏好设置" title="打开偏好设置" onClick={openOptions}><Gear/><span>设置</span></button></header>
+      </span></div><button type="button" className="icon-button popup-settings-btn" aria-label="打开偏好设置" title="打开偏好设置" onClick={openOptions}><Gear/></button></header>
     {!ready && <p className="notice" role="status">正在读取设置…</p>}
     {ready && !currentSite && <p className="unsupported-site-notice" role="status">当前非目标站点</p>}
     <>

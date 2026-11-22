@@ -93,7 +93,7 @@
     "128": "images/icon-128.png"
   },
   "name": "__MSG_extensionName__",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "permissions": [
     "storage",
     "tabs"

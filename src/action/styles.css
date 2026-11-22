@@ -986,40 +986,35 @@ button {
 
 .compact-switch-label {font-size:12px;white-space:nowrap}
 .popup-settings-btn {
-  display:inline-flex;
-  align-items:center;
-  gap:5px;
-  height:32px;
-  padding:0 11px 0 9px;
-  border:1px solid #dfd7ef;
+  width:34px;
+  height:34px;
+  padding:0;
+  border:1px solid #dcd6e6;
   border-radius:9px;
-  background:#f6f2fe;
-  color:#5b2fd1;
-  font-size:12px;
-  font-weight:600;
+  background:#fff;
+  color:#5f5a6b;
   flex:none;
 }
 .popup-settings-btn svg {
-  width:16px;
-  height:16px;
-  flex:none;
+  width:18px;
+  height:18px;
 }
 .popup-settings-btn:hover {
-  background:#ece3fc;
-  border-color:#c6b2f2;
-  color:#481ec0;
+  background:#f5f1fc;
+  border-color:#c5b3ee;
+  color:var(--accent);
 }
 .popup.is-enabled {color:#302039;--border:#61457633;--accent:#7543f5}
 .popup.is-enabled .popup-header {color:#faf5ff}
 .popup.is-enabled .icon-button {color:#e0cfee}
 .popup.is-enabled .icon-button:hover {background:#ffffff1a}
 .popup.is-enabled .popup-settings-btn {
-  background:#ffffff24;
+  background:#ffffff14;
   border-color:#ffffff4d;
-  color:#ffffff;
+  color:#faf5ff;
 }
 .popup.is-enabled .popup-settings-btn:hover {
-  background:#ffffff38;
+  background:#ffffff29;
   border-color:#ffffff80;
   color:#ffffff;
 }
