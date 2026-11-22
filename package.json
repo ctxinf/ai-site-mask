@@ -17,7 +17,10 @@
   "name": "ai-site-mask",
   "private": true,
   "scripts": {
+    "brave:ext": "node scripts/brave-ext.mjs",
     "build": "extension build",
+    "build:agentdev": "node scripts/build-agentdev.mjs",
+    "build:brave": "extension build --browser brave",
     "dev": "extension dev --allow-control --allow-eval --logs all --log-format pretty",
     "dev:brave": "extension dev --browser=brave --profile false --allow-control --allow-eval",
     "dev:quiet": "extension dev --allow-control --allow-eval",
@@ -35,7 +38,9 @@
     "browser": "node scripts/browser.mjs",
     "browser:popup": "node scripts/browser.mjs popup",
     "browser:page": "node scripts/browser.mjs page",
-    "test": "node --experimental-transform-types --import ./tests/register.mjs tests/core.test.mjs"
+    "test": "node --experimental-transform-types --import ./tests/register.mjs tests/core.test.mjs",
+    "typecheck": "tsc --noEmit",
+    "verify": "npm test && npm run typecheck"
   },
   "type": "module",
   "version": "0.0.7"

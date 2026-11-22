@@ -1,30 +1,47 @@
 #!/usr/bin/env node
-// Attach to the existing Brave or a managed Chromium; agent-browser handles interaction and screenshots.
+// Attach to the existing Brave (default) or a managed Chromium; agent-browser handles interaction and screenshots.
 import {execFileSync} from 'node:child_process'
 import {createHash} from 'node:crypto'
 import {mkdirSync, readFileSync} from 'node:fs'
 import {dirname, join, resolve} from 'node:path'
 import {fileURLToPath} from 'node:url'
-import {homedir} from 'node:os'
+import {inspectBraveExtensions, readBraveDevTools} from './brave-ext.mjs'
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const [surface, ...command] = process.argv.slice(2)
+
+function resolveBraveExtensionId() {
+  if (process.env.WORKFLOW_EXTENSION_ID) return process.env.WORKFLOW_EXTENSION_ID
+  const extInfo = inspectBraveExtensions()
+  if (extInfo.preferencesReadable) {
+    if (extInfo.enabled.length === 1) return extInfo.enabled[0].id
+    if (extInfo.enabled.length > 1) {
+      const list = extInfo.enabled.map(e => `${e.id} (${e.relPath})`).join(', ')
+      throw new Error(`Brave 中同时启用了多个本地扩展: ${list}。请设置 WORKFLOW_EXTENSION_ID=<ID> 指定目标。`)
+    }
+    const disabledList = extInfo.extensions.map(e => `${e.id} (${e.relPath})`).join(', ')
+    const detail = disabledList ? `已发现但均已禁用: ${disabledList}` : '未发现本仓库的解包扩展'
+    throw new Error(`Brave 中本项目扩展当前未启用（${detail}）。请停下来请用户在 brave://extensions 手动加载或开启后再继续。`)
+  }
+  if (extInfo.readyReceipt?.extensionId) return extInfo.readyReceipt.extensionId
+  throw new Error('无法确定扩展 ID。请运行 npm run brave:ext 检查，或显式传入 WORKFLOW_EXTENSION_ID=<ID>。')
+}
 
 try {
   if (!['popup', 'page'].includes(surface)) {
     throw new Error('用法: npm run browser -- <popup|page> [agent-browser 命令及参数]')
   }
-  const browser = process.env.WORKFLOW_BROWSER || 'chromium'
-  if (!['chromium', 'brave'].includes(browser)) throw new Error('WORKFLOW_BROWSER 必须为 chromium 或 brave')
+  const browser = process.env.WORKFLOW_BROWSER || 'brave'
+  if (!['chromium', 'brave'].includes(browser)) throw new Error('WORKFLOW_BROWSER 必须为 brave 或 chromium')
   let ready, webSocketDebuggerUrl
   if (browser === 'brave') {
     // Attach to the existing default-profile browser; never launch another one.
-    ready = JSON.parse(readFileSync(join(root, 'dist/extension-js/brave/ready.json'), 'utf8'))
-    const receipt = process.env.WORKFLOW_DEVTOOLS_FILE || join(homedir(), '.config/BraveSoftware/Brave-Browser/DevToolsActivePort')
-    const [port, path] = readFileSync(receipt, 'utf8').trim().split(/\r?\n/)
-    if (!/^\d+$/.test(port) || !path?.startsWith('/devtools/browser/')) throw new Error('Brave 调试地址无效，请开启远程调试')
-    webSocketDebuggerUrl = `ws://127.0.0.1:${port}${path}`
-    ready.instanceId = webSocketDebuggerUrl
+    const devtools = readBraveDevTools()
+    webSocketDebuggerUrl = devtools.webSocketDebuggerUrl
+    ready = {
+      instanceId: webSocketDebuggerUrl,
+      extensionId: surface === 'popup' ? resolveBraveExtensionId() : null,
+    }
   } else {
     try {
       ready = JSON.parse(readFileSync(join(root, 'dist/extension-js/chromium/ready.json'), 'utf8'))
@@ -44,11 +61,11 @@ try {
     if (!response.ok) throw new Error('开发浏览器 CDP 不可用，请运行 npm run doctor')
     ;({webSocketDebuggerUrl} = await response.json())
     if (!webSocketDebuggerUrl) throw new Error('开发浏览器没有提供 CDP WebSocket 地址')
+    if (process.env.WORKFLOW_EXTENSION_ID) ready.extensionId = process.env.WORKFLOW_EXTENSION_ID
   }
 
   const identity = createHash('sha256').update(`${root}:${ready.instanceId}`).digest('hex').slice(0, 12)
-  if (process.env.WORKFLOW_EXTENSION_ID) ready.extensionId = process.env.WORKFLOW_EXTENSION_ID
-  if (!/^[a-p]{32}$/.test(ready.extensionId)) throw new Error('扩展 ID 无效')
+  if (surface === 'popup' && !/^[a-p]{32}$/.test(ready.extensionId || '')) throw new Error('扩展 ID 无效')
   const executable = join(root, 'node_modules/.bin/agent-browser')
   const flags = ['--session', `ewf-${identity}-${surface}`, '--cdp', webSocketDebuggerUrl, '--pin-tab']
   const run = (args, capture = false) => execFileSync(executable, [...flags, ...args], {
@@ -62,7 +79,7 @@ try {
     const result = JSON.parse(run(['get', 'url', '--json'], true))
     if (!result.success) throw new Error(JSON.stringify(result))
     const current = result.data.url
-    const popup = `chrome-extension://${ready.extensionId}/action/index.html`
+    const popup = surface === 'popup' ? `chrome-extension://${ready.extensionId}/action/index.html` : null
     // Each surface has a pinned tab. Human tabs and the other surface stay untouched.
     if (surface === 'popup' && current !== popup) run(['open', popup], true)
     if (surface === 'page' && current === 'about:blank' && args[0] !== 'open') {
