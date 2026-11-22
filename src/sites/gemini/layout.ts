@@ -170,12 +170,12 @@ html.skm-mask-on [data-skm-gemini-accuracy]::after {
 /* Additional native features retain their layout, hit targets, menus and keyboard access. */
 html.skm-mask-on :is([data-skm-gemini-extra],modular-zero-state suggestion-block,chat-spark-toggle,
   desktop-get-app-button,temp-chat-button,conversation-actions-icon,speech-dictation-mic-button,
-  input-area-v2 bard-mode-switcher) {
+  input-area-v2 bard-mode-switcher,input-area-v2 .leading-actions-wrapper) {
   opacity: var(--skm-extra-opacity, .25) !important; transition: opacity 150ms ease;
 }
 html.skm-mask-on :is([data-skm-gemini-extra],modular-zero-state suggestion-block,chat-spark-toggle,
   desktop-get-app-button,temp-chat-button,conversation-actions-icon,speech-dictation-mic-button,
-  input-area-v2 bard-mode-switcher):is(:hover,:focus-within,:has([aria-expanded="true"])) { opacity: 1 !important; }
+  input-area-v2 bard-mode-switcher,input-area-v2 .leading-actions-wrapper):is(:hover,:focus-within,:has([aria-expanded="true"])) { opacity: 1 !important; }
 html.skm-mask-on :is(.skm-gemini-toggle,.skm-gemini-title,.skm-gemini-model,.skm-gemini-fold):focus-visible {
   outline: 2px solid var(--skm-g-accent); outline-offset: 2px;
 }
@@ -205,7 +205,8 @@ html.skm-mask-on * { scrollbar-width: thin; scrollbar-color: var(--skm-g-border)
 }
 @media (prefers-reduced-motion: reduce) {
   html.skm-mask-on :is([data-skm-gemini-extra],suggestion-block,chat-spark-toggle,desktop-get-app-button,
-    temp-chat-button,conversation-actions-icon,speech-dictation-mic-button,bard-mode-switcher) { transition: none; }
+    temp-chat-button,conversation-actions-icon,speech-dictation-mic-button,bard-mode-switcher,
+    input-area-v2 .leading-actions-wrapper) { transition: none; }
 }
 `
 }
